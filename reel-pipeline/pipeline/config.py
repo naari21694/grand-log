@@ -41,4 +41,7 @@ GEMINI_MODEL = _s("GEMINI_MODEL", "gemini-2.5-flash")
 MEALIE_URL = _s("MEALIE_URL").rstrip("/")
 MEALIE_TOKEN = _s("MEALIE_TOKEN")
 
+# --- Den Den Mushi (Telegram bot) ---
+TELEGRAM_BOT_TOKEN = _s("TELEGRAM_BOT_TOKEN")
+
 WORKDIR.mkdir(parents=True, exist_ok=True)

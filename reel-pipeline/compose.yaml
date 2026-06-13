@@ -1,0 +1,15 @@
+# Den Den Mushi: the long-running Telegram bot service. Runs on any OS with Docker.
+#   cp .env.example .env     (set TELEGRAM_BOT_TOKEN, plus your brain and Mealie keys)
+#   docker compose up -d
+services:
+  den-den-mushi:
+    build: .
+    image: grand-log
+    entrypoint: ["python", "-m", "pipeline.bot"]
+    env_file: [.env]
+    volumes:
+      - ./work:/app/work
+      - whisper-cache:/cache/huggingface
+    restart: unless-stopped
+volumes:
+  whisper-cache:

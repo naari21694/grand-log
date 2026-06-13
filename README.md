@@ -109,7 +109,7 @@ Grand Log wants a real crew. Anyone can contribute via fork and pull request. Tr
 ## 🗓️ Roadmap
 
 - [x] **Baratie** core pipeline (single-reel, dry-run testable)
-- [ ] **Den Den Mushi**: Telegram bot plus queue (share and forget), plus Docker compose for any-OS install
+- [x] **Den Den Mushi**: Telegram bot, SQLite queue, worker, and Docker compose (built; add a token and run)
 - [ ] Backlog backfill from your Instagram data export (saved Collections become routes)
 - [ ] **Log Pose** and **Going Merry**
 - [ ] Auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)

@@ -61,7 +61,16 @@ pipeline/download.py    yt-dlp, gallery-dl    pipeline/process.py  orchestrate o
 pipeline/transcribe.py  whisper backends      pipeline/frames.py   ffmpeg scene-frames
 ```
 
+## Den Den Mushi (the Telegram bot)
+Share a reel to the bot, tap a crew button, and it queues and files the reel, then replies in the chat.
+```bash
+# get a bot token from @BotFather, put it in .env as TELEGRAM_BOT_TOKEN
+python -m pipeline.bot          # long-polling, no public URL needed
+# or, on any OS with Docker:
+docker compose up -d
+```
+Jobs land in a SQLite queue (`work/queue.db`) so they survive a restart. A background worker runs the same pipeline and reports back. Baratie (recipes) is live; Log Pose and Going Merry reply that they are not aboard yet.
+
 ## Next increments
-1. Telegram bot (long-poll, recipe button), SQLite job queue, worker.
-2. Backlog backfill: IG data-export `saved_*.json` into the queue (Collection name sets the route).
-3. Japan and Home systems: a new schema plus a Google Sheets or Maps connector (reuses everything above).
+1. Backlog backfill: IG data-export `saved_*.json` into the queue (Collection name sets the route).
+2. Japan and Home systems: a new schema plus a Google Sheets or Maps connector (reuses everything above).
