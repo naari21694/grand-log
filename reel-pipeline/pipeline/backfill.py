@@ -85,8 +85,8 @@ def _drain() -> int:
         job = queue.claim_next()
         if job is None:
             return done
-        if job["bucket"] not in ("recipe", "japan"):
-            queue.mark_failed(job["id"], "bucket not aboard yet")
+        if job["bucket"] not in ("recipe", "japan", "home"):
+            queue.mark_failed(job["id"], "unknown bucket")
             continue
         try:
             recipe = process_one(job["url"], job["bucket"], False)

@@ -48,8 +48,8 @@ async def on_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await query.edit_message_text("Share the reel again, please.")
         return
     bucket = query.data
-    if bucket not in ("recipe", "japan"):
-        await query.edit_message_text(f"{NAMES.get(bucket, bucket)} is not aboard yet. Baratie and Log Pose are live.")
+    if bucket not in ("recipe", "japan", "home"):
+        await query.edit_message_text("Unknown crew member.")
         return
     queue.enqueue(url, bucket, query.message.chat_id)
     await query.edit_message_text(f"Queued for {NAMES[bucket]}. I will report back when it is filed.")
@@ -62,15 +62,15 @@ async def _worker(app: Application) -> None:
         if job is None:
             await asyncio.sleep(5)
             continue
-        if job["bucket"] not in ("recipe", "japan"):  # Going Merry is not aboard yet
-            queue.mark_failed(job["id"], "bucket not aboard yet")
+        if job["bucket"] not in ("recipe", "japan", "home"):
+            queue.mark_failed(job["id"], "unknown bucket")
             continue
         try:
-            recipe = await asyncio.to_thread(process_one, job["url"], job["bucket"], False)
-            title = recipe.get("title", "your recipe")
-            queue.mark_done(job["id"], title)
+            record = await asyncio.to_thread(process_one, job["url"], job["bucket"], False)
+            label = record.get("title") or record.get("name") or record.get("item") or "it"
+            queue.mark_done(job["id"], label)
             if job["chat_id"]:  # backfill jobs carry chat_id 0, no one to reply to
-                await app.bot.send_message(job["chat_id"], f"Baratie filed it: {title}")
+                await app.bot.send_message(job["chat_id"], f"{NAMES.get(job['bucket'], 'Grand Log')} filed: {label}")
         except Exception as exc:  # keep the worker alive no matter what one job does
             queue.mark_failed(job["id"], str(exc))
             if job["chat_id"]:

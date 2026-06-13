@@ -13,7 +13,7 @@ import json
 import os
 import sys
 
-from . import brain, config, download, frames, geocode, mealie, places, transcribe
+from . import brain, config, download, frames, geocode, home, mealie, places, transcribe
 
 # Grand Log suite, each bucket is a One Piece artifact.
 NAMES = {"recipe": "Baratie", "japan": "Log Pose", "home": "Going Merry"}
@@ -57,6 +57,8 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict
 
     if bucket == "japan":
         return _process_place(url, media, transcript)
+    if bucket == "home":
+        return _process_home(url, media, transcript)
     return _process_recipe(url, media, transcript, dry_run)
 
 
@@ -96,10 +98,18 @@ def _process_place(url: str, media, transcript: str) -> dict:
     return place
 
 
+def _process_home(url: str, media, transcript: str) -> dict:
+    item = brain.extract_home(media.caption, transcript, url, media.handle)
+    item["_source_url"] = url
+    home.append(item)
+    print(f"🏠  Going Merry saved: {item.get('item')} ({item.get('room') or item.get('category') or '?'})")
+    return item
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="Reel to a crew destination")
     ap.add_argument("url")
-    ap.add_argument("--bucket", default="recipe", choices=["recipe", "japan"])
+    ap.add_argument("--bucket", default="recipe", choices=["recipe", "japan", "home"])
     ap.add_argument("--dry-run", action="store_true", help="recipe only: write JSON, don't post to Mealie")
     a = ap.parse_args()
     _banner()

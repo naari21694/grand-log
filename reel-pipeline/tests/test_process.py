@@ -61,3 +61,15 @@ def test_japan_bucket_routes_to_place_and_geocodes(tmp_path, monkeypatch):
     assert out["name"] == "Ichiran"
     assert out["lat"] == 35.0 and out["lng"] == 139.0
     assert written["name"] == "Ichiran"
+
+
+def test_home_bucket_routes_to_vault(tmp_path, monkeypatch):
+    item = {"item": "Sofa", "category": "furniture", "room": "living"}
+    monkeypatch.setattr(process.download, "fetch", lambda url: Media(video="v.mp4", caption="cap", handle="d"))
+    monkeypatch.setattr(process.transcribe, "run", lambda video: "t")
+    monkeypatch.setattr(process.brain, "extract_home", lambda *a, **k: dict(item))
+    written = {}
+    monkeypatch.setattr(process.home, "append", lambda i: written.update(i))
+    out = process.process_one("https://x/reel/1/", "home")
+    assert out["item"] == "Sofa"
+    assert written["item"] == "Sofa"

@@ -37,6 +37,12 @@ def extract_place(caption: str, transcript: str, url: str, handle: str) -> dict:
     return _extract(prompt, schema.PLACE_SCHEMA, schema.PLACE_SCHEMA_HINT)
 
 
+def extract_home(caption: str, transcript: str, url: str, handle: str) -> dict:
+    prompt = schema.HOME_PROMPT.format(
+        url=url, handle=handle, caption=caption[:8000], transcript=transcript[:12000])
+    return _extract(prompt, schema.HOME_SCHEMA, schema.HOME_SCHEMA_HINT)
+
+
 def _claude(prompt: str, json_schema: dict) -> dict:
     exe = shutil.which(config.CLAUDE_BIN) or config.CLAUDE_BIN
     cmd = [exe, "-p", prompt, "--output-format", "json", "--json-schema", json.dumps(json_schema)]

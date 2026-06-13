@@ -135,3 +135,45 @@ CAPTION:
 TRANSCRIPT:
 {transcript}
 """
+
+# ----- Going Merry (home and build-together ideas) -----
+HOME_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "item": {"type": "string"},
+        "category": {"type": "string",
+                     "enum": ["furniture", "decor", "material", "appliance", "lighting", "idea", "other"]},
+        "room": {"type": "string", "description": "living, bedroom, kitchen, bath, outdoor, whole-home, other"},
+        "price": {"type": "string"},
+        "store": {"type": "string", "description": "where to buy, if stated"},
+        "link": {"type": "string", "description": "product or source link, if any"},
+        "dimensions": {"type": "string"},
+        "color": {"type": "string"},
+        "why": {"type": "string", "description": "one line on what makes it worth keeping"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+    },
+    "required": ["item", "category"],
+}
+
+HOME_SCHEMA_HINT = json.dumps(HOME_SCHEMA)
+
+HOME_PROMPT = """You are extracting ONE thing to remember for a home from an Instagram reel's caption and transcript.
+
+Return JSON matching the schema.
+- item: the specific thing (a sofa, a paint colour, a shelf, a layout idea).
+- category: furniture, decor, material, appliance, lighting, idea, or other.
+- room: living, bedroom, kitchen, bath, outdoor, whole-home, or other.
+- price, store, link, dimensions, color: as stated. Leave blank if unknown. Do NOT invent a link or price.
+- why: one line on what makes it worth keeping.
+- confidence: high, medium, low.
+
+SOURCE_URL: {url}
+CREATOR: {handle}
+
+CAPTION:
+{caption}
+
+TRANSCRIPT:
+{transcript}
+"""

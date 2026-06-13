@@ -35,3 +35,17 @@ def test_place_schema_hint_is_valid_json():
 def test_place_prompt_formats_with_all_keys():
     out = schema.PLACE_PROMPT.format(url="u", handle="h", caption="c", transcript="t")
     assert "category" in out
+
+
+def test_home_schema_lists_required_fields():
+    assert "item" in schema.HOME_SCHEMA["required"]
+    assert "category" in schema.HOME_SCHEMA["required"]
+
+
+def test_home_schema_hint_is_valid_json():
+    json.loads(schema.HOME_SCHEMA_HINT)
+
+
+def test_home_prompt_formats_with_all_keys():
+    out = schema.HOME_PROMPT.format(url="u", handle="h", caption="c", transcript="t")
+    assert "category" in out

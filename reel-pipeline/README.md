@@ -87,6 +87,13 @@ python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket japan
 ```
 It extracts the place, geocodes it free via OpenStreetMap, and appends to `work/places.geojson` and `work/places.csv`. Import the GeoJSON into Google My Maps for pins, or the CSV into a sheet for region panels. A live Sheets and My Maps API connector is a tracked follow-up.
 
+## Going Merry (home ideas)
+Share a home or build-together reel and pick Going Merry, or run it directly:
+```bash
+python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket home
+```
+It extracts the item (what, room, price, store, link, dimensions, why) and appends to `work/home.csv` and `work/home.json`. Import the CSV into a sheet or Notion for your vault.
+
 ## Tests
 ```bash
 pip install pytest requests
@@ -94,5 +101,5 @@ pytest -q
 ```
 
 ## Next increments
-1. Going Merry (home ideas): a new schema plus a destination, reusing everything above.
-2. A live Google Sheets and My Maps API connector for Log Pose.
+1. A live Google Sheets, My Maps, or Notion connector for Log Pose and Going Merry.
+2. Auto-router (one share, zero taps) and resurfacing reminders.
