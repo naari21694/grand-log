@@ -85,7 +85,7 @@ def _drain() -> int:
         job = queue.claim_next()
         if job is None:
             return done
-        if job["bucket"] != "recipe":
+        if job["bucket"] not in ("recipe", "japan"):
             queue.mark_failed(job["id"], "bucket not aboard yet")
             continue
         try:

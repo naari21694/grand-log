@@ -48,8 +48,8 @@ async def on_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await query.edit_message_text("Share the reel again, please.")
         return
     bucket = query.data
-    if bucket != "recipe":
-        await query.edit_message_text(f"{NAMES.get(bucket, bucket)} is not aboard yet. Baratie (recipes) is live.")
+    if bucket not in ("recipe", "japan"):
+        await query.edit_message_text(f"{NAMES.get(bucket, bucket)} is not aboard yet. Baratie and Log Pose are live.")
         return
     queue.enqueue(url, bucket, query.message.chat_id)
     await query.edit_message_text(f"Queued for {NAMES[bucket]}. I will report back when it is filed.")
@@ -62,7 +62,7 @@ async def _worker(app: Application) -> None:
         if job is None:
             await asyncio.sleep(5)
             continue
-        if job["bucket"] != "recipe":  # backfill may queue other buckets; only Baratie is live
+        if job["bucket"] not in ("recipe", "japan"):  # Going Merry is not aboard yet
             queue.mark_failed(job["id"], "bucket not aboard yet")
             continue
         try:

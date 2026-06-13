@@ -80,6 +80,13 @@ python -m pipeline.backfill path/to/saved_posts.json --bucket recipe
 ```
 Parsing matches the common export shape with a regex fallback. Check it against your own file and adjust `_extract` if a key differs.
 
+## Log Pose (places)
+Share a travel reel and pick Log Pose, or run it directly:
+```bash
+python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket japan
+```
+It extracts the place, geocodes it free via OpenStreetMap, and appends to `work/places.geojson` and `work/places.csv`. Import the GeoJSON into Google My Maps for pins, or the CSV into a sheet for region panels. A live Sheets and My Maps API connector is a tracked follow-up.
+
 ## Tests
 ```bash
 pip install pytest requests
@@ -87,4 +94,5 @@ pytest -q
 ```
 
 ## Next increments
-1. Japan and Home systems: a new schema plus a Google Sheets or Maps connector (reuses everything above).
+1. Going Merry (home ideas): a new schema plus a destination, reusing everything above.
+2. A live Google Sheets and My Maps API connector for Log Pose.

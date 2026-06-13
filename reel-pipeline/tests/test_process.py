@@ -47,3 +47,17 @@ def test_vision_skipped_when_unavailable(tmp_path, monkeypatch):
                         lambda *a, **k: called.__setitem__("vision", True))
     process.process_one("https://x/reel/1/", "recipe", dry_run=True)
     assert called["vision"] is False
+
+
+def test_japan_bucket_routes_to_place_and_geocodes(tmp_path, monkeypatch):
+    place = {"name": "Ichiran", "category": "food", "region": "Tokyo"}
+    monkeypatch.setattr(process.download, "fetch", lambda url: Media(video="v.mp4", caption="cap", handle="chef"))
+    monkeypatch.setattr(process.transcribe, "run", lambda video: "t")
+    monkeypatch.setattr(process.brain, "extract_place", lambda *a, **k: dict(place))
+    monkeypatch.setattr(process.geocode, "lookup", lambda query: (35.0, 139.0))
+    written = {}
+    monkeypatch.setattr(process.places, "append", lambda p: written.update(p))
+    out = process.process_one("https://x/reel/1/", "japan")
+    assert out["name"] == "Ichiran"
+    assert out["lat"] == 35.0 and out["lng"] == 139.0
+    assert written["name"] == "Ichiran"

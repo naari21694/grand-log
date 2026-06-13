@@ -1,6 +1,10 @@
-"""Process one reel end to end. The Telegram bot + queue (next increment) just call process_one().
+"""Process one reel end to end and route it to the right crew member.
+
+The Telegram bot and the backfill both call process_one(url, bucket). Everything up to the
+brain is shared; the bucket picks the schema and the destination.
 
     python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
+    python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket japan
 """
 from __future__ import annotations
 
@@ -9,7 +13,7 @@ import json
 import os
 import sys
 
-from . import brain, config, download, frames, mealie, transcribe
+from . import brain, config, download, frames, geocode, mealie, places, transcribe
 
 # Grand Log suite, each bucket is a One Piece artifact.
 NAMES = {"recipe": "Baratie", "japan": "Log Pose", "home": "Going Merry"}
@@ -45,13 +49,18 @@ def _banner() -> None:
 
 def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict:
     print(f"🏴‍☠️  {NAMES.get(bucket, 'Grand Log')} · {bucket}")
-    print(f"⤵  download  {url}")
+    print(f"   download  {url}")
     media = download.fetch(url)
     print(f"   caption {len(media.caption)} chars · @{media.handle or '?'}")
-
     transcript = transcribe.run(media.video)
     print(f"   transcript {len(transcript)} chars")
 
+    if bucket == "japan":
+        return _process_place(url, media, transcript)
+    return _process_recipe(url, media, transcript, dry_run)
+
+
+def _process_recipe(url: str, media, transcript: str, dry_run: bool) -> dict:
     recipe = brain.extract_text(media.caption, transcript, url, media.handle)
     missing = recipe.get("missing_quantities") or []
     if missing and brain.vision_available():
@@ -72,11 +81,26 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict
     return recipe
 
 
+def _process_place(url: str, media, transcript: str) -> dict:
+    place = brain.extract_place(media.caption, transcript, url, media.handle)
+    place["_source_url"] = url
+    if not place.get("lat") and place.get("name"):
+        query = " ".join(p for p in (place.get("name"), place.get("city"), place.get("country")) if p)
+        coords = geocode.lookup(query)
+        if coords:
+            place["lat"], place["lng"] = coords
+    places.append(place)
+    where = place.get("region") or place.get("city") or "?"
+    pinned = "pinned" if place.get("lat") else "saved (no coords)"
+    print(f"🗾  Log Pose {pinned}: {place.get('name')} ({where})")
+    return place
+
+
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Reel to recipe")
+    ap = argparse.ArgumentParser(description="Reel to a crew destination")
     ap.add_argument("url")
-    ap.add_argument("--bucket", default="recipe")
-    ap.add_argument("--dry-run", action="store_true", help="extract only; write JSON, don't post to Mealie")
+    ap.add_argument("--bucket", default="recipe", choices=["recipe", "japan"])
+    ap.add_argument("--dry-run", action="store_true", help="recipe only: write JSON, don't post to Mealie")
     a = ap.parse_args()
     _banner()
     process_one(a.url, a.bucket, a.dry_run)

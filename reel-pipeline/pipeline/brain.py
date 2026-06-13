@@ -19,12 +19,22 @@ from . import config, schema
 
 
 # ---------------- text pass ----------------
+def _extract(prompt: str, json_schema: dict, schema_hint: str) -> dict:
+    if config.BRAIN_TEXT == "gemini":
+        return _gemini([{"text": prompt + "\n\nReturn ONLY JSON for this schema:\n" + schema_hint}])
+    return _claude(prompt, json_schema)
+
+
 def extract_text(caption: str, transcript: str, url: str, handle: str) -> dict:
     prompt = schema.TEXT_PROMPT.format(
         url=url, handle=handle, caption=caption[:8000], transcript=transcript[:12000])
-    if config.BRAIN_TEXT == "gemini":
-        return _gemini([{"text": prompt + "\n\nReturn ONLY JSON for this schema:\n" + schema.SCHEMA_HINT}])
-    return _claude(prompt, schema.RECIPE_SCHEMA)
+    return _extract(prompt, schema.RECIPE_SCHEMA, schema.SCHEMA_HINT)
+
+
+def extract_place(caption: str, transcript: str, url: str, handle: str) -> dict:
+    prompt = schema.PLACE_PROMPT.format(
+        url=url, handle=handle, caption=caption[:8000], transcript=transcript[:12000])
+    return _extract(prompt, schema.PLACE_SCHEMA, schema.PLACE_SCHEMA_HINT)
 
 
 def _claude(prompt: str, json_schema: dict) -> dict:

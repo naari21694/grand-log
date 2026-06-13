@@ -93,3 +93,45 @@ Read the quantities/units shown as on-screen text in the attached frames and ret
 Schema:
 {schema_hint}
 """
+
+# ----- Log Pose (places) -----
+PLACE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "category": {"type": "string", "enum": ["food", "see", "do", "buy", "try", "stay", "other"]},
+        "region": {"type": "string", "description": "Broad area, e.g. Tokyo, Kansai, Hokkaido."},
+        "city": {"type": "string"},
+        "country": {"type": "string"},
+        "address": {"type": "string"},
+        "price": {"type": "string", "description": "rough price level or amount if stated"},
+        "why": {"type": "string", "description": "one line on what the reel says is worth it"},
+        "lat": {"type": "number"},
+        "lng": {"type": "number"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+    },
+    "required": ["name", "category"],
+}
+
+PLACE_SCHEMA_HINT = json.dumps(PLACE_SCHEMA)
+
+PLACE_PROMPT = """You are extracting ONE place to remember from an Instagram reel's caption and transcript.
+
+Return JSON matching the schema.
+- name: the specific place (restaurant, shop, viewpoint, neighbourhood). If the reel covers several, pick the main one.
+- category: food, see, do, buy, try, stay, or other.
+- region, city, country, address: as stated. Leave blank if unknown. Do NOT invent an address.
+- lat, lng: only if explicitly stated, else 0. A geocoder fills them later.
+- why: one line on what the reel says is worth it.
+- confidence: high, medium, low.
+
+SOURCE_URL: {url}
+CREATOR: {handle}
+
+CAPTION:
+{caption}
+
+TRANSCRIPT:
+{transcript}
+"""

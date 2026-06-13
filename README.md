@@ -111,7 +111,8 @@ Grand Log wants a real crew. Anyone can contribute via fork and pull request. Tr
 - [x] **Baratie** core pipeline (single-reel, dry-run testable)
 - [x] **Den Den Mushi**: Telegram bot, SQLite queue, worker, and Docker compose (built; add a token and run)
 - [x] Backlog backfill from your Instagram data export (saved Collections become routes)
-- [ ] **Log Pose** and **Going Merry**
+- [x] **Log Pose** v1: places to a GeoJSON and region CSV you import into My Maps and a sheet (live Sheets/Maps API connector tracked)
+- [ ] **Going Merry** (home ideas)
 - [ ] Auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)
 
 ## 📜 License
