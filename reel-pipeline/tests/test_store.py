@@ -15,7 +15,7 @@ def test_save_then_search_finds_it(tmp_path, monkeypatch):
 
 def test_search_matches_body_text_and_misses_cleanly(tmp_path, monkeypatch):
     _fresh(tmp_path, monkeypatch)
-    store.save(bucket="japan", title="Ichiran", text="best tonkotsu ramen in Tokyo")
+    store.save(bucket="place", title="Ichiran", text="best tonkotsu ramen in Tokyo")
     assert store.search("tonkotsu")
     assert store.search("nothing-here-at-all") == []
 

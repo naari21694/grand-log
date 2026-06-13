@@ -1,6 +1,6 @@
-# Reel to Recipe pipeline (v0.1, core)
+# Grand Log pipeline
 
-Share an Instagram recipe reel, get the exact ingredients and measurements, auto-scaled for 1, 2, 4, 6, 10 in Mealie. This is the core single-reel pipeline. The Telegram bot, the queue, and the backlog backfill layer on top of it next. Design and decisions live in `../reel-pipeline-blueprint.md`.
+Share an Instagram reel and the value gets extracted and filed: a recipe with exact measurements auto-scaled for 1, 2, 4, 6, 10 in Mealie, a place on your map, or a home idea in your vault. The single-reel core, the Telegram bot (Den Den Mushi), the SQLite queue, the backfill, and the tile dashboard are all here. The module map is in [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
 ```
 download (yt-dlp, gallery-dl fallback)

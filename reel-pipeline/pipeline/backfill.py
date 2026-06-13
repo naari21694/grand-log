@@ -64,7 +64,7 @@ def parse(export_path: str, default: str = "recipe", force: str | None = None) -
 
 
 def _drain() -> int:
-    """Process every pending job now, synchronously. Recipe bucket only for the moment."""
+    """Process every pending job now, synchronously. Handles all buckets via process_one."""
     done = 0
     while True:
         job = queue.claim_next()
@@ -74,8 +74,8 @@ def _drain() -> int:
             queue.mark_failed(job["id"], "unknown bucket")
             continue
         try:
-            recipe = process_one(job["url"], job["bucket"], False)
-            queue.mark_done(job["id"], recipe.get("title", ""))
+            record = process_one(job["url"], job["bucket"], False)
+            queue.mark_done(job["id"], record.get("_card", {}).get("title", ""))
             done += 1
         except Exception as exc:
             queue.mark_failed(job["id"], str(exc))

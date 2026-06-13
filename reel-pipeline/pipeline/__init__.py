@@ -1,2 +1,2 @@
-"""Reel to recipe pipeline. See reel-pipeline-blueprint.md for the design."""
+"""Grand Log: share a reel, extract the value, file it. See ../ARCHITECTURE.md."""
 __version__ = "0.1.0"
