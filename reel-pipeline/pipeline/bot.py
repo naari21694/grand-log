@@ -12,7 +12,7 @@ import asyncio
 import os
 import re
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -102,6 +102,20 @@ async def on_digest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("A few to revisit:\n" + _result_lines(rows))
 
 
+async def on_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/dashboard: open the tile dashboard, as a Mini App if WEBAPP_URL is an https link."""
+    url = config.WEBAPP_URL
+    if not url:
+        await update.message.reply_text(
+            "Run the dashboard with `python -m pipeline.web`, then set WEBAPP_URL in .env to its URL.")
+        return
+    if url.startswith("https://"):
+        markup = InlineKeyboardMarkup([[InlineKeyboardButton("Open dashboard", web_app=WebAppInfo(url))]])
+        await update.message.reply_text("Your Grand Log", reply_markup=markup)
+    else:
+        await update.message.reply_text(f"Dashboard: {url}")
+
+
 async def _worker(app: Application) -> None:
     """Claim jobs one at a time, run the pipeline in a thread, and report back. Never dies."""
     while True:
@@ -139,6 +153,7 @@ def main() -> None:
     app = Application.builder().token(config.TELEGRAM_BOT_TOKEN).post_init(_post_init).build()
     app.add_handler(CommandHandler("search", on_search))
     app.add_handler(CommandHandler("digest", on_digest))
+    app.add_handler(CommandHandler("dashboard", on_dashboard))
     app.add_handler(CallbackQueryHandler(on_choice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, on_link))
     app.run_polling()

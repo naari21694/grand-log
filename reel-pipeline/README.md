@@ -71,6 +71,13 @@ docker compose up -d
 ```
 Two commands turn the chat into your hub: `/search <term>` finds anything you have saved, and `/digest` resurfaces a few items to revisit. Jobs land in a SQLite queue (`work/queue.db`) so they survive a restart, and every filed item is indexed in `work/items.db` for search.
 
+## Dashboard (tile view)
+A clean tile grid of everything you saved, searchable and filterable by crew, each tile opening into its real destination. Works in any phone browser, and as a Telegram Mini App.
+```bash
+python -m pipeline.web            # then open http://localhost:8080
+```
+To open it from the bot with `/dashboard`, expose it over HTTPS (a tunnel) and set `WEBAPP_URL` in `.env`. No extra dependencies; it reads the same `work/items.db`.
+
 ## Backfill your whole saved list
 Export from Instagram (Accounts Center, Your information and permissions, Download your information, JSON), then queue it. Saved Collection names route each reel.
 ```bash

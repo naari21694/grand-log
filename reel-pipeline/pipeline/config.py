@@ -44,4 +44,7 @@ MEALIE_TOKEN = _s("MEALIE_TOKEN")
 # --- Den Den Mushi (Telegram bot) ---
 TELEGRAM_BOT_TOKEN = _s("TELEGRAM_BOT_TOKEN")
 
+# --- dashboard (the tile Mini App) ---
+WEBAPP_URL = _s("WEBAPP_URL")  # https URL of the dashboard; enables the /dashboard Mini App button
+
 WORKDIR.mkdir(parents=True, exist_ok=True)

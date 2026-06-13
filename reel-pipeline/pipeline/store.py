@@ -66,6 +66,13 @@ def recent(limit: int = 5) -> list[dict]:
     return [dict(row) for row in rows]
 
 
+def get(item_id: int) -> dict | None:
+    init_db()
+    with _conn() as conn:
+        row = conn.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
+    return dict(row) if row else None
+
+
 def sample(limit: int = 5) -> list[dict]:
     """A few items to resurface. Random so the pile does not go stale and the digest stays small."""
     init_db()

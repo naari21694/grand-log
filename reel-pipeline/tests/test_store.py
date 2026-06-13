@@ -32,3 +32,10 @@ def test_sample_is_bounded(tmp_path, monkeypatch):
     for i in range(10):
         store.save(bucket="home", title=f"item{i}")
     assert len(store.sample(3)) == 3
+
+
+def test_get_returns_row_or_none(tmp_path, monkeypatch):
+    _fresh(tmp_path, monkeypatch)
+    item_id = store.save(bucket="recipe", title="X")
+    assert store.get(item_id)["title"] == "X"
+    assert store.get(999999) is None

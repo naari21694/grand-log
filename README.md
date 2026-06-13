@@ -114,6 +114,7 @@ Grand Log wants a real crew. Anyone can contribute via fork and pull request. Tr
 - [x] **Log Pose** v1: places to a GeoJSON and region CSV you import into My Maps and a sheet (live Sheets/Maps API connector tracked)
 - [x] **Going Merry** v1: home and build-together ideas to a CSV and JSON vault you import into a sheet or Notion
 - [x] **Hub v1**: rich capture cards, `/search` across everything, `/digest` resurfacing (from real user research)
+- [x] **Dashboard v2**: a clean tile view (thumbnails) of everything, in the browser or as a Telegram Mini App
 - [ ] Auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)
 
 ## 📜 License
