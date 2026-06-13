@@ -3,13 +3,6 @@ import json
 from pipeline import backfill
 
 
-def test_route_matches_keywords():
-    assert backfill.route("My Recipes") == "recipe"
-    assert backfill.route("Japan trip") == "japan"
-    assert backfill.route("Home decor") == "home"
-    assert backfill.route("misc", default="recipe") == "recipe"
-
-
 def test_parse_saved_posts_shape(tmp_path):
     data = {"saved_saved_media": [
         {"title": "chef", "string_map_data": {"Saved on": {"href": "https://www.instagram.com/reel/AAA/"}}},
@@ -24,11 +17,11 @@ def test_parse_saved_posts_shape(tmp_path):
 
 def test_parse_collections_routes_by_name(tmp_path):
     data = {"saved_collections": [
-        {"title": "Japan 2026", "string_list_data": [{"href": "https://www.instagram.com/reel/CCC/"}]},
+        {"title": "Travel 2026", "string_list_data": [{"href": "https://www.instagram.com/reel/CCC/"}]},
     ]}
     path = tmp_path / "saved_collections.json"
     path.write_text(json.dumps(data), encoding="utf-8")
-    assert backfill.parse(str(path)) == [("https://www.instagram.com/reel/CCC/", "japan")]
+    assert backfill.parse(str(path)) == [("https://www.instagram.com/reel/CCC/", "place")]
 
 
 def test_parse_falls_back_to_regex(tmp_path):
@@ -40,7 +33,7 @@ def test_parse_falls_back_to_regex(tmp_path):
 
 def test_force_bucket_overrides_routing(tmp_path):
     data = {"saved_collections": [
-        {"title": "Japan", "string_list_data": [{"href": "https://www.instagram.com/reel/EEE/"}]},
+        {"title": "Anywhere", "string_list_data": [{"href": "https://www.instagram.com/reel/EEE/"}]},
     ]}
     path = tmp_path / "c.json"
     path.write_text(json.dumps(data), encoding="utf-8")

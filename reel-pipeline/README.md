@@ -62,14 +62,14 @@ pipeline/transcribe.py  whisper backends      pipeline/frames.py   ffmpeg scene-
 ```
 
 ## Den Den Mushi (the Telegram bot)
-Share a reel to the bot, tap a crew button, and it queues and files the reel, then replies in the chat.
+Share a reel to the bot, tap a crew button (Baratie, Log Pose, Going Merry), and it files the reel, then replies with a card: the thumbnail, the title, a one-line summary, and an Open button to the real destination.
 ```bash
 # get a bot token from @BotFather, put it in .env as TELEGRAM_BOT_TOKEN
 python -m pipeline.bot          # long-polling, no public URL needed
 # or, on any OS with Docker:
 docker compose up -d
 ```
-Jobs land in a SQLite queue (`work/queue.db`) so they survive a restart. A background worker runs the same pipeline and reports back. Baratie (recipes) is live; Log Pose and Going Merry reply that they are not aboard yet.
+Two commands turn the chat into your hub: `/search <term>` finds anything you have saved, and `/digest` resurfaces a few items to revisit. Jobs land in a SQLite queue (`work/queue.db`) so they survive a restart, and every filed item is indexed in `work/items.db` for search.
 
 ## Backfill your whole saved list
 Export from Instagram (Accounts Center, Your information and permissions, Download your information, JSON), then queue it. Saved Collection names route each reel.
@@ -78,12 +78,12 @@ python -m pipeline.backfill path/to/saved_posts.json              # queue only
 python -m pipeline.backfill path/to/saved_collections.json --run  # queue and process now
 python -m pipeline.backfill path/to/saved_posts.json --bucket recipe
 ```
-Parsing matches the common export shape with a regex fallback. Check it against your own file and adjust `_extract` if a key differs.
+Parsing matches the common export shape with a regex fallback. Check it against your own file and adjust `_extract` if a key differs. Routing keywords are editable without touching code: drop a `work/routes.json` like `{ "place": ["travel", "trip"], "home": ["decor"] }` to override them.
 
 ## Log Pose (places)
 Share a travel reel and pick Log Pose, or run it directly:
 ```bash
-python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket japan
+python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket place
 ```
 It extracts the place, geocodes it free via OpenStreetMap, and appends to `work/places.geojson` and `work/places.csv`. Import the GeoJSON into Google My Maps for pins, or the CSV into a sheet for region panels. A live Sheets and My Maps API connector is a tracked follow-up.
 

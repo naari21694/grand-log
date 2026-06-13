@@ -1,7 +1,7 @@
 """Backfill: load your Instagram data export and queue everything you saved.
 
-Saved Collection names become the router when present: recipes go to Baratie, Japan and
-travel to Log Pose, home to Going Merry. Anything unmatched uses --default.
+Saved Collection names become the router when present: recipes go to Baratie, travel and
+places to Log Pose, home to Going Merry. Anything unmatched uses --default.
 
   python -m pipeline.backfill saved_posts.json
   python -m pipeline.backfill saved_collections.json --run     # also process now, no Telegram
@@ -23,25 +23,10 @@ import json
 import re
 from pathlib import Path
 
-from . import queue
+from . import queue, routing
 from .process import process_one
 
-_BUCKETS = ("recipe", "japan", "home")
-_ROUTES = [
-    ("japan", ("japan", "travel", "trip", "tokyo", "osaka", "kyoto", "place", "itinerary")),
-    ("home", ("home", "decor", "furnitur", "house", "interior", "apartment", "build")),
-    ("recipe", ("recipe", "food", "cook", "meal", "kitchen", "baking", "eat")),
-]
 _IG_URL = re.compile(r"https?://(?:www\.)?instagram\.com/[^\s\"']+")
-
-
-def route(collection_name: str, default: str = "recipe") -> str:
-    """Map a saved-Collection name to a bucket by keyword, falling back to default."""
-    name = (collection_name or "").lower()
-    for bucket, keys in _ROUTES:
-        if any(key in name for key in keys):
-            return bucket
-    return default
 
 
 def _extract(data: object) -> list[tuple[str, str]]:
@@ -74,7 +59,7 @@ def parse(export_path: str, default: str = "recipe", force: str | None = None) -
         if url in seen:
             continue
         seen.add(url)
-        out.append((url, force or route(name, default)))
+        out.append((url, force or routing.route(name, default)))
     return out
 
 
@@ -85,7 +70,7 @@ def _drain() -> int:
         job = queue.claim_next()
         if job is None:
             return done
-        if job["bucket"] not in ("recipe", "japan", "home"):
+        if job["bucket"] not in routing.BUCKETS:
             queue.mark_failed(job["id"], "unknown bucket")
             continue
         try:
@@ -99,8 +84,8 @@ def _drain() -> int:
 def main() -> None:
     ap = argparse.ArgumentParser(description="Queue your saved Instagram reels from a data export.")
     ap.add_argument("export", help="path to saved_posts.json or saved_collections.json")
-    ap.add_argument("--default", default="recipe", choices=_BUCKETS, help="bucket for unmatched items")
-    ap.add_argument("--bucket", choices=_BUCKETS, help="force every item to this bucket")
+    ap.add_argument("--default", default="recipe", choices=routing.BUCKETS, help="bucket for unmatched items")
+    ap.add_argument("--bucket", choices=routing.BUCKETS, help="force every item to this bucket")
     ap.add_argument("--run", action="store_true", help="also process the queue now, no Telegram needed")
     args = ap.parse_args()
 

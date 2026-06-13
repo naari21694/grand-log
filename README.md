@@ -113,6 +113,7 @@ Grand Log wants a real crew. Anyone can contribute via fork and pull request. Tr
 - [x] Backlog backfill from your Instagram data export (saved Collections become routes)
 - [x] **Log Pose** v1: places to a GeoJSON and region CSV you import into My Maps and a sheet (live Sheets/Maps API connector tracked)
 - [x] **Going Merry** v1: home and build-together ideas to a CSV and JSON vault you import into a sheet or Notion
+- [x] **Hub v1**: rich capture cards, `/search` across everything, `/digest` resurfacing (from real user research)
 - [ ] Auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)
 
 ## 📜 License
