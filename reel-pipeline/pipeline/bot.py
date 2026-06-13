@@ -62,17 +62,22 @@ async def _worker(app: Application) -> None:
         if job is None:
             await asyncio.sleep(5)
             continue
+        if job["bucket"] != "recipe":  # backfill may queue other buckets; only Baratie is live
+            queue.mark_failed(job["id"], "bucket not aboard yet")
+            continue
         try:
             recipe = await asyncio.to_thread(process_one, job["url"], job["bucket"], False)
             title = recipe.get("title", "your recipe")
             queue.mark_done(job["id"], title)
-            await app.bot.send_message(job["chat_id"], f"Baratie filed it: {title}")
+            if job["chat_id"]:  # backfill jobs carry chat_id 0, no one to reply to
+                await app.bot.send_message(job["chat_id"], f"Baratie filed it: {title}")
         except Exception as exc:  # keep the worker alive no matter what one job does
             queue.mark_failed(job["id"], str(exc))
-            try:
-                await app.bot.send_message(job["chat_id"], f"That one failed: {exc}")
-            except Exception:
-                pass
+            if job["chat_id"]:
+                try:
+                    await app.bot.send_message(job["chat_id"], f"That one failed: {exc}")
+                except Exception:
+                    pass
 
 
 async def _post_init(app: Application) -> None:

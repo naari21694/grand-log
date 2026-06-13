@@ -71,6 +71,20 @@ docker compose up -d
 ```
 Jobs land in a SQLite queue (`work/queue.db`) so they survive a restart. A background worker runs the same pipeline and reports back. Baratie (recipes) is live; Log Pose and Going Merry reply that they are not aboard yet.
 
+## Backfill your whole saved list
+Export from Instagram (Accounts Center, Your information and permissions, Download your information, JSON), then queue it. Saved Collection names route each reel.
+```bash
+python -m pipeline.backfill path/to/saved_posts.json              # queue only
+python -m pipeline.backfill path/to/saved_collections.json --run  # queue and process now
+python -m pipeline.backfill path/to/saved_posts.json --bucket recipe
+```
+Parsing matches the common export shape with a regex fallback. Check it against your own file and adjust `_extract` if a key differs.
+
+## Tests
+```bash
+pip install pytest requests
+pytest -q
+```
+
 ## Next increments
-1. Backlog backfill: IG data-export `saved_*.json` into the queue (Collection name sets the route).
-2. Japan and Home systems: a new schema plus a Google Sheets or Maps connector (reuses everything above).
+1. Japan and Home systems: a new schema plus a Google Sheets or Maps connector (reuses everything above).

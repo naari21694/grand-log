@@ -110,7 +110,7 @@ Grand Log wants a real crew. Anyone can contribute via fork and pull request. Tr
 
 - [x] **Baratie** core pipeline (single-reel, dry-run testable)
 - [x] **Den Den Mushi**: Telegram bot, SQLite queue, worker, and Docker compose (built; add a token and run)
-- [ ] Backlog backfill from your Instagram data export (saved Collections become routes)
+- [x] Backlog backfill from your Instagram data export (saved Collections become routes)
 - [ ] **Log Pose** and **Going Merry**
 - [ ] Auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)
 

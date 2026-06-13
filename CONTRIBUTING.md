@@ -18,6 +18,9 @@ python -m pipeline.process "<reel-url>" --dry-run
 ## The one rule of this codebase
 If 10 lines do the job as well as 200, write 10. Match the surrounding style. Every stage (download, transcribe, brain, destination) is a swappable adapter, so keep new vendors behind the same small interface.
 
+## Naming
+snake_case for functions and variables, PascalCase for classes, UPPER_SNAKE for constants, a leading underscore for private helpers. Functions are verbs, variables are nouns, booleans read as questions (is_ready, has_token). Modules are lowercase and single-purpose. Tests are `test_<module>.py` with `test_<behaviour>` functions. No abbreviations for their own sake, and no hype or internal-instruction words in any public name.
+
 ## Workflow
 1. Fork, then branch (`feat/name` or `fix/name`).
 2. Keep the change focused. Run `python -m compileall reel-pipeline/pipeline`.
