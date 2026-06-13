@@ -1,0 +1,35 @@
+name: 🐛 Bug report
+description: Something broke in the pipeline
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected vs. what actually happened.
+    validations:
+      required: true
+  - type: input
+    id: stage
+    attributes:
+      label: Which stage?
+      placeholder: download / transcribe / brain / mealie / other
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. python -m pipeline.process "<reel url>" --dry-run
+        2. ...
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: OS, Python version, BRAIN_TEXT / BRAIN_VISION, transcribe backend
+  - type: checkboxes
+    id: nosecrets
+    attributes:
+      label: Confirm
+      options:
+        - label: I've removed any URLs/keys/personal data I don't want public
+          required: true
