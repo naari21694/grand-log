@@ -136,8 +136,6 @@ Open source under [AGPL-3.0](LICENSE): free to use, modify, self-host, and build
 
 **Free to use. Free to build on. Open forever. Profit from it, give back.** 🏴‍☠️
 
-*The One Piece was the meals we cooked and the homes we built along the way.*
-
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:26d0ce,100:1a2980&height=120&section=footer" width="100%" alt=""/>
 
 </div>

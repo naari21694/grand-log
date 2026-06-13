@@ -19,26 +19,28 @@ try:
 except Exception:
     pass
 
-STRAW_HAT = r"""
-       .-~~~~~-.
-     .'  : : :  '.
-    /   : : : :   \
-   |   : : : : :   |
-   '._:_:_:_:_:_:_.'
-  .'               '.
- (___________________)
-"""
-
-SHADOW = "     '-..______..-'"
+# Side-view straw hat with Luffy's red band, slightly levitating over a faint shadow.
+_COLORS = {"y": "\033[93m", "r": "\033[91m", "d": "\033[90m", "": ""}
+_HAT = [
+    ("y", "          .-~~~~~~~-."),
+    ("y", "        .'           '."),
+    ("y", "       /               \\"),
+    ("y", "      /                 \\"),
+    ("r", "   ,--===================--,"),
+    ("y", "  /                         \\"),
+    ("y", "  '.,_____________________,.'"),
+    ("", ""),
+    ("d", "      '-.._______..-'"),
+]
 
 
 def _banner() -> None:
-    """Straw hat, slightly levitating: a gap and a faint shadow below. Yellow on a real terminal."""
-    if sys.stdout.isatty() and not os.getenv("NO_COLOR"):
-        print(f"\033[93m{STRAW_HAT}\033[0m")
-        print(f"\033[90m{SHADOW}\033[0m\n")
-    else:
-        print(f"{STRAW_HAT}\n{SHADOW}\n")
+    """Print the straw hat: yellow hat, red band, faint shadow, floating. Plain if not a tty or NO_COLOR."""
+    color = sys.stdout.isatty() and not os.getenv("NO_COLOR")
+    reset = "\033[0m"
+    for tag, line in _HAT:
+        print(f"{_COLORS[tag]}{line}{reset}" if (color and tag) else line)
+    print()
 
 
 def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict:
