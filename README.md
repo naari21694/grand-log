@@ -104,7 +104,7 @@ All invoked as separate tools, never bundled or modified:
 
 ## 🤝 Contributing
 
-Grand Log wants a real crew. Anyone can contribute via fork and pull request. Trusted contributors climb a transparent, rules-based ladder (Contributor, Triager, Reviewer, Maintainer) with measurable promotion criteria. See [GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Be kind: [Code of Conduct](CODE_OF_CONDUCT.md).
+Grand Log wants a real crew. Anyone can contribute via fork and pull request. Trusted contributors climb a transparent, rules-based ladder (Contributor, Triager, Reviewer, Maintainer) with measurable promotion criteria. Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Be kind: [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## 🗓️ Roadmap
 

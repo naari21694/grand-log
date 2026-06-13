@@ -8,7 +8,7 @@ Welcome aboard. Grand Log stays free and crew-driven, so contributions are genui
 - Docs, examples, translations, triage.
 
 ## Dev setup
-See [`reel-pipeline/README.md`](reel-pipeline/README.md). Short version:
+Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [`reel-pipeline/README.md`](reel-pipeline/README.md). Short version:
 ```bash
 cd reel-pipeline && pip install -r requirements.txt   # plus install ffmpeg
 cp .env.example .env

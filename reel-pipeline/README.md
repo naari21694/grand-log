@@ -54,12 +54,7 @@ services:
 | `MEALIE_URL`, `MEALIE_TOKEN` | leave the URL empty to force dry-run |
 
 ## Layout
-```
-pipeline/config.py      env config            pipeline/brain.py    claude_p and gemini adapters
-pipeline/schema.py      recipe schema, prompts pipeline/mealie.py   two-step create and image
-pipeline/download.py    yt-dlp, gallery-dl    pipeline/process.py  orchestrate one reel (CLI)
-pipeline/transcribe.py  whisper backends      pipeline/frames.py   ffmpeg scene-frames
-```
+The full module map, grouped by layer, is in [`../ARCHITECTURE.md`](../ARCHITECTURE.md). In short: entrypoints (`process`, `bot`, `web`, `backfill`), core (`config`, `routing`, `schema`), stages (`download`, `transcribe`, `frames`), extract (`brain`, `geocode`), destinations (`mealie`, `places`, `home`), and data (`queue`, `store`).
 
 ## Den Den Mushi (the Telegram bot)
 Share a reel to the bot, tap a crew button (Baratie, Log Pose, Going Merry), and it files the reel, then replies with a card: the thumbnail, the title, a one-line summary, and an Open button to the real destination.
