@@ -1,4 +1,4 @@
-"""Central config — everything is read from environment / .env (12-factor).
+"""Central config, everything is read from environment / .env (12-factor).
 
 Nothing here is secret-in-code; copy .env.example to .env and fill it in.
 """

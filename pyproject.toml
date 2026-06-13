@@ -1,4 +1,4 @@
-# Tooling config only — the app is run from reel-pipeline/ (requirements.txt).
+# Tooling config only, the app is run from reel-pipeline/ (requirements.txt).
 
 [tool.ruff]
 line-length = 100

@@ -1,7 +1,7 @@
-"""Audio → text. Default backend faster-whisper (pip, cross-platform, great for dev/Windows).
+"""Audio to text. Default backend faster-whisper (pip, cross-platform, great for dev/Windows).
 whisper.cpp backend is the ARM-prod optimization (set WHISPER_CPP_BIN/MODEL).
 
-Multilingual: language is auto-detected per clip. Failure is non-fatal — we fall back to
+Multilingual: language is auto-detected per clip. Failure is non-fatal, we fall back to
 caption-only extraction.
 """
 from __future__ import annotations

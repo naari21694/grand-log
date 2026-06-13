@@ -1,4 +1,4 @@
-"""Grab the reel: yt-dlp primary → gallery-dl fallback. Returns video + caption + handle.
+"""Grab the reel: yt-dlp primary to gallery-dl fallback. Returns video + caption + handle.
 
 Instagram is the #1 fragility (login-walled): set YTDLP_COOKIES_BROWSER to a logged-in
 browser profile of a THROWAWAY account, and keep yt-dlp updated.

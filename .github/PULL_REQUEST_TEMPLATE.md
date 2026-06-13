@@ -5,7 +5,7 @@
 <!-- e.g. ran `python -m pipeline.process "<reel>" --dry-run` on EN/JA reels -->
 
 ## Checklist
-- [ ] Focused change; matches surrounding style (lean — 10 lines over 200)
+- [ ] Focused change; matches surrounding style (lean, 10 lines over 200)
 - [ ] `python -m py_compile pipeline/*.py` passes
 - [ ] Docs/README updated if behavior changed
 - [ ] No secrets committed (`.env`, cookies, media)

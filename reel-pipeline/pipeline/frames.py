@@ -28,7 +28,7 @@ def sample(video: str, threshold: float = 0.3, max_frames: int = 8) -> list[str]
                     "-vsync", "vfr", "-frames:v", str(max_frames), patt], capture_output=True)
     out = sorted(d.glob("*.jpg"))
 
-    if len(out) < 2:  # no hard cuts → time-sample one frame / 2s
+    if len(out) < 2:  # no hard cuts to time-sample one frame / 2s
         for f in out:
             f.unlink()
         subprocess.run([_ff(), "-y", "-i", video, "-vf", "fps=1/2,scale=1280:-1",

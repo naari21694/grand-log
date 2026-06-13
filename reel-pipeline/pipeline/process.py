@@ -10,7 +10,7 @@ import sys
 
 from . import brain, config, download, frames, mealie, transcribe
 
-# Grand Log suite — each bucket is a One Piece artifact.
+# Grand Log suite, each bucket is a One Piece artifact.
 NAMES = {"recipe": "Baratie", "japan": "Log Pose", "home": "Going Merry"}
 
 try:
@@ -38,7 +38,7 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict
     if dry_run or not config.MEALIE_URL:
         out = config.WORKDIR / "last_recipe.json"
         out.write_text(json.dumps(recipe, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"\U0001f4dd  dry-run — recipe written to {out}")
+        print(f"\U0001f4dd  dry-run, recipe written to {out}")
         print(f"   {recipe.get('title')} · serves {recipe.get('base_servings')} · "
               f"{len(recipe.get('ingredients', []))} ingredients · confidence {recipe.get('confidence')}")
         return recipe

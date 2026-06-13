@@ -1,4 +1,4 @@
-"""The recipe schema + extraction prompts — the crown jewel.
+"""The recipe schema + extraction prompts, the crown jewel.
 
 RECIPE_SCHEMA is fed to `claude -p --json-schema` (strict) and described to Gemini
 (which runs in JSON mode). Quantities are captured for `base_servings`; Mealie's
@@ -52,7 +52,7 @@ RECIPE_SCHEMA = {
         "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
         "confidence_notes": {"type": "string"},
         "missing_quantities": {"type": "array", "items": {"type": "string"},
-                               "description": "Food names whose quantity was never stated — triggers the vision pass."},
+                               "description": "Food names whose quantity was never stated, triggers the vision pass."},
     },
     "required": ["title", "base_servings", "ingredients", "instructions"],
 }
@@ -67,7 +67,7 @@ Rules:
 - All ingredient quantities are for base_servings.
 - Set "grams" to that ingredient's weight at base_servings when reasonably known (flour, sugar, butter, liquids, etc.); use 0 for things like "1 egg" or "to taste". Keep the human-friendly unit/quantity too.
 - Translate non-English content to English; keep a notable original name in "note".
-- "scaling_notes" is the MOST valuable field — be specific about what breaks when scaling up/down: salt/spices/seasoning and leavening (baking powder/soda/yeast) are non-linear; note how cook time, pan/tray size, and liquid-for-evaporation change for larger batches.
+- "scaling_notes" is the MOST important field. Be specific about what breaks when scaling up or down: salt, spices, seasoning, and leavening (baking powder, soda, yeast) are non-linear. Note how cook time, pan or tray size, and liquid for evaporation change for larger batches.
 - "nutrition_per_serving" = best estimate PER SINGLE SERVING.
 - "confidence" + "confidence_notes": flag ambiguities (e.g. "amounts only shown on screen, not spoken").
 

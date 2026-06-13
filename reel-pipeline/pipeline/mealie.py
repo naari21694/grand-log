@@ -26,7 +26,7 @@ def _to_payload(r: dict) -> dict:
 
     notes = []
     if r.get("scaling_notes"):
-        notes.append({"title": "Scaling (1→10 people)", "text": r["scaling_notes"]})
+        notes.append({"title": "Scaling (1 to 10 people)", "text": r["scaling_notes"]})
     if r.get("confidence"):
         notes.append({"title": f"Extraction confidence: {r['confidence']}",
                       "text": r.get("confidence_notes", "")})
