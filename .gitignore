@@ -1,0 +1,47 @@
+# ---- secrets / personal ----
+.env
+.env.*
+!.env.example
+*.cookies
+cookies.txt
+*cookies*.txt
+
+# Personal planning doc (keep private; publish a generalized ARCHITECTURE.md instead if desired)
+reel-pipeline-blueprint.md
+
+# ---- runtime / downloaded media (never commit reels) ----
+work/
+*.mp4
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.jpg
+*.jpeg
+*.png
+last_recipe.json
+*.info.json
+
+# ---- whisper / model caches ----
+models/
+*.bin
+*.gguf
+*.ct2
+
+# ---- python ----
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ---- local agent / editor config ----
+.claude/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
