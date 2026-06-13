@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from . import brain, config, download, frames, mealie, transcribe
@@ -17,6 +18,27 @@ try:
     sys.stdout.reconfigure(encoding="utf-8")  # keep emoji safe on Windows consoles
 except Exception:
     pass
+
+STRAW_HAT = r"""
+       .-~~~~~-.
+     .'  : : :  '.
+    /   : : : :   \
+   |   : : : : :   |
+   '._:_:_:_:_:_:_.'
+  .'               '.
+ (___________________)
+"""
+
+SHADOW = "     '-..______..-'"
+
+
+def _banner() -> None:
+    """Straw hat, slightly levitating: a gap and a faint shadow below. Yellow on a real terminal."""
+    if sys.stdout.isatty() and not os.getenv("NO_COLOR"):
+        print(f"\033[93m{STRAW_HAT}\033[0m")
+        print(f"\033[90m{SHADOW}\033[0m\n")
+    else:
+        print(f"{STRAW_HAT}\n{SHADOW}\n")
 
 
 def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict:
@@ -49,9 +71,10 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False) -> dict
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Reel -> recipe")
+    ap = argparse.ArgumentParser(description="Reel to recipe")
     ap.add_argument("url")
     ap.add_argument("--bucket", default="recipe")
     ap.add_argument("--dry-run", action="store_true", help="extract only; write JSON, don't post to Mealie")
     a = ap.parse_args()
+    _banner()
     process_one(a.url, a.bucket, a.dry_run)
