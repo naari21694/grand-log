@@ -5,8 +5,8 @@
 <!-- e.g. ran `python -m pipeline.process "<reel>" --dry-run` on EN/JA reels -->
 
 ## Checklist
-- [ ] Focused change; matches surrounding style (lean, 10 lines over 200)
-- [ ] `python -m py_compile pipeline/*.py` passes
-- [ ] Docs/README updated if behavior changed
+- [ ] Focused change; matches the house style (lean, 10 lines over 200)
+- [ ] `python -m compileall reel-pipeline/pipeline` and `pytest -q` pass
+- [ ] Docs updated if behavior changed (start at [ARCHITECTURE.md](../ARCHITECTURE.md))
 - [ ] No secrets committed (`.env`, cookies, media)
 - [ ] I agree to the [CLA](../CLA.md)

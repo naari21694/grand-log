@@ -19,6 +19,13 @@ Grand Log is young, with a clear ambition: grow a real crew that sails itself. W
 
 Thresholds are scaled-down Kubernetes numbers. We keep the ratios and the time in grade, and raise the counts as the crew grows.
 
+```mermaid
+flowchart LR
+    U["User"] --> C["Contributor"] --> T["Triager"] --> R["Reviewer"] --> M["Maintainer"]
+    M -. "no activity 12mo" .-> E["Emeritus"]
+    E -. "merit does not expire" .-> M
+```
+
 > How it works on GitHub today: a promotion is a PR adding you to `MAINTAINERS.md`, [`OWNERS`](OWNERS), or `.github/CODEOWNERS`, approved per the rule above. Branch protection then auto-requests your review on matching paths. The Kubernetes-style `/lgtm` bot automation is a later step, and the ladder works fine on plain GitHub without it.
 
 ## Decisions

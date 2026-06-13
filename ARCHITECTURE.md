@@ -2,6 +2,20 @@
 
 Grand Log is a small, flat Python package. One reel goes in, a structured item comes out, it lands in a best-of-breed destination, and it is indexed for search and resurfacing. Every module is single-purpose and under about 180 lines. The app lives in [`reel-pipeline/pipeline/`](reel-pipeline/pipeline).
 
+```mermaid
+flowchart LR
+    BOT["bot · Den Den Mushi"] --> Q[("queue")]
+    BF["backfill"] --> Q
+    Q --> P["process_one"]
+    P --> DL["download"] --> TR["transcribe"] --> FR["frames"]
+    FR --> BR["brain"]
+    BR -->|recipe| ML["mealie"]
+    BR -->|place| GC["geocode"] --> PL["places"]
+    BR -->|home| HM["home"]
+    P --> ST[("store")]
+    ST --> WEB["web · dashboard"]
+```
+
 ## The flow
 1. Share a reel (the bot) or load an Instagram export (backfill).
 2. `process_one(url, bucket)` takes over.

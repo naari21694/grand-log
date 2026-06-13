@@ -41,10 +41,10 @@ flowchart LR
 
 | | Tool | What it does | Status |
 |---|---|---|---|
-| 🍳 | **Baratie** | Recipes into a Mealie cookbook with exact measurements, auto-scaled for 1, 2, 4, 6, 10 people | building |
-| 🗾 | **Log Pose** | Places into Google Maps pins plus a region-grouped sheet | planned |
-| 🏠 | **Going Merry** | Home and build-together ideas into an organized vault | planned |
-| 🐌 | **Den Den Mushi** | The Telegram bot you share reels to (any phone, zero install) | planned |
+| 🍳 | **Baratie** | Recipes into a Mealie cookbook with exact measurements, auto-scaled for 1, 2, 4, 6, 10 people | built |
+| 🗾 | **Log Pose** | Places into map pins (GeoJSON) plus a region-grouped sheet (CSV) | built (v1) |
+| 🏠 | **Going Merry** | Home and build-together ideas into an organized vault (CSV and JSON) | built (v1) |
+| 🐌 | **Den Den Mushi** | The Telegram bot you share reels to (any phone, zero install) | built |
 
 ## 🍳 Baratie, the recipe engine (built)
 
