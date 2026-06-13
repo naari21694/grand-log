@@ -3,6 +3,7 @@
 Nothing here is secret-in-code; copy .env.example to .env and fill it in.
 """
 from __future__ import annotations
+
 import os
 from pathlib import Path
 

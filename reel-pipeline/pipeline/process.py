@@ -3,6 +3,7 @@
     python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
 """
 from __future__ import annotations
+
 import argparse
 import json
 import sys

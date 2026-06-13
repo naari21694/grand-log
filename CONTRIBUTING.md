@@ -27,5 +27,8 @@ python -m pipeline.process "<reel-url>" --dry-run
 ## CLA
 Grand Log is dual-licensed (AGPL-3.0 + commercial — see [LICENSING.md](LICENSING.md)). On your first PR the CLA bot will ask you to agree to the [CLA](CLA.md). This keeps a single clean copyright line so the project can stay free *and* sustainable.
 
+## Climbing the crew
+Trusted contributors climb a transparent, rules-based ladder — **Contributor → Triager → Reviewer → Maintainer** — with measurable promotion criteria (merged-PR counts, time-in-grade, named sponsors, a no-objection window). It's all in [GOVERNANCE.md](GOVERNANCE.md), and every promotion is itself a reviewable PR. New here? Look for [`good first issue`](https://github.com/naari21694/grand-log/labels/good%20first%20issue).
+
 ## Be kind
 See the [Code of Conduct](CODE_OF_CONDUCT.md). We're here to build something joyful.

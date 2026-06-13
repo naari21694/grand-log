@@ -1,0 +1,10 @@
+.venv
+work
+*.wav
+*.mp4
+*.jpg
+*.jpeg
+*.png
+__pycache__
+*.pyc
+.env

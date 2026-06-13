@@ -12,7 +12,7 @@ You may use, study, modify, self-host, and build on Grand Log for free, **provid
 
 If you want to build a **proprietary or closed-source** product or service on Grand Log — i.e. use it commercially *without* complying with AGPL's copyleft (you don't want to open-source your stack) — you need a **separate commercial license**.
 
-👉 **Contact the maintainer** (V Narendra Kumar) to arrange one. *(Recommended: route commercial inquiries through a Neriq business address.)*
+👉 **Contact the maintainer** to arrange one (open an issue tagged `commercial-license`).
 
 This is the only path to commercial/closed use, and it's how Grand Log funds staying free for everyone else.
 

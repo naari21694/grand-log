@@ -4,6 +4,7 @@ Instagram is the #1 fragility (login-walled): set YTDLP_COOKIES_BROWSER to a log
 browser profile of a THROWAWAY account, and keep yt-dlp updated.
 """
 from __future__ import annotations
+
 import json
 import subprocess
 from dataclasses import dataclass

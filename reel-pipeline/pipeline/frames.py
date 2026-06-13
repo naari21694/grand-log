@@ -4,6 +4,7 @@ Recipes swap overlay cards on cuts, so scene detection grabs each distinct text 
 while skipping redundant frames; falls back to time-sampling for continuous shots.
 """
 from __future__ import annotations
+
 import shutil
 import subprocess
 from pathlib import Path

@@ -1,4 +1,4 @@
-"""The god-tier recipe schema + extraction prompts. This is the crown jewel.
+"""The recipe schema + extraction prompts — the crown jewel.
 
 RECIPE_SCHEMA is fed to `claude -p --json-schema` (strict) and described to Gemini
 (which runs in JSON mode). Quantities are captured for `base_servings`; Mealie's

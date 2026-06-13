@@ -5,6 +5,7 @@ Multilingual: language is auto-detected per clip. Failure is non-fatal — we fa
 caption-only extraction.
 """
 from __future__ import annotations
+
 import json
 import shutil
 import subprocess

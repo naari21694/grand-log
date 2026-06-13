@@ -1,0 +1,14 @@
+# Tooling config only — the app is run from reel-pipeline/ (requirements.txt).
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".venv", "work"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]   # pyflakes + import sort + key errors
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+ignore_missing_imports = true

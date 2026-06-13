@@ -23,7 +23,7 @@ winget install Gyan.FFmpeg          # if ffmpeg isn't on PATH
 copy .env.example .env              # defaults are fine for this tier
 python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
 ```
-→ writes `work/last_recipe.json` — the full god-tier recipe (exact measurements, grams,
+→ writes `work/last_recipe.json` — the full structured recipe (exact measurements, grams,
 `scaling_notes`, per-serving nutrition, confidence). Uses `claude -p` for the brain (your
 Claude Code CLI). First run downloads the Whisper model (~1.5 GB).
 

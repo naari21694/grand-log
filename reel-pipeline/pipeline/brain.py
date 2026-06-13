@@ -7,6 +7,7 @@ Why split: `claude -p`'s image input is unreliable, so overlay frames go through
 real multimodal API (Gemini free). Swap either side with one env var.
 """
 from __future__ import annotations
+
 import base64
 import json
 import shutil
