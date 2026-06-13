@@ -1,6 +1,6 @@
 yt-dlp>=2025.1.1
 gallery-dl>=1.27
-faster-whisper>=1.1.0
+faster-whisper>=1.2.1
 requests>=2.31
 python-dotenv>=1.0
 # Telegram bot + queue arrive in the next increment (python-telegram-bot)
