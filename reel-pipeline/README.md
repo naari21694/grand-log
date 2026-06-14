@@ -86,7 +86,7 @@ python -m pipeline.backfill saved_collections.json --run            # full run (
 ```
 Each item is auto-routed: a Collection name with a clear keyword routes for free, otherwise the brain classifies it once per collection. Recipe, place, and home get full extraction from the caption; everything else (art, books, memes) is indexed as a searchable `saved` item, so nothing is lost. An item with no caption, or whose extraction is thin, is recorded in `work/needs_video.jsonl` for a later video pass on a host where Instagram cookies work.
 
-The run is resumable (it skips any URL already saved), so you can stop and restart it, or spread it across sessions to stay under a free-tier daily limit. Set `BACKFILL_SLEEP` to pause between AI calls. Routing keywords are editable without touching code: drop a `work/routes.json` like `{ "place": ["travel", "trip"], "home": ["decor"] }`.
+The run is resumable: it skips any URL already saved, so you can stop and restart it anytime. For a full backlog the **Gemini free tier (about 20 requests a day) is far too small**. Because the brain is provider-agnostic, point `BRAIN_PROVIDER` at a higher-limit option for the backfill and keep Gemini for live shares: Groq (free, fast), a local Ollama (free, unlimited), or a Gemini key with billing (roughly a dollar for the whole backlog). Set `BACKFILL_SLEEP` to match the provider's rate limit. Routing keywords are editable without touching code: drop a `work/routes.json` like `{ "place": ["travel", "trip"], "home": ["decor"] }`.
 
 ## 🗾 Log Pose (places)
 Share a travel reel and pick Log Pose, or run it directly:
