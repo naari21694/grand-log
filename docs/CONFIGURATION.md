@@ -4,6 +4,18 @@ This is the complete settings reference for Grand Log. Every setting is read fro
 
 Grand Log is alpha. Pick the provider whose key you already have, point a few variables at it, and you have a working brain.
 
+## Capture mode
+
+`CAPTURE_MODE` decides how much of a reel Grand Log reads.
+
+- `auto` (default): read the caption first with no download. Download the video and run Whisper only when the caption alone is too thin to trust (for a recipe that means missing ingredients or instructions, flagged missing quantities, or low confidence). This is the fast, cheap default, and it skips Whisper entirely for reels whose value is in the caption.
+- `caption`: never download the video. Fastest and lightest, but it misses reels where the recipe is only spoken in the audio or only shown on screen. The CLI flag `--no-video` sets this for a single run.
+- `full`: always download and transcribe, then run the on-screen vision pass when a quantity is missing. Highest fidelity, heaviest.
+
+```bash
+CAPTURE_MODE=auto
+```
+
 ## The brain
 
 The brain makes one schema-locked extraction call against whatever LLM you point it at. You pick one provider with `BRAIN_PROVIDER` (`gemini`, `openai`, or `anthropic`) and supply that provider's key. The other provider settings are ignored.
@@ -229,6 +241,7 @@ Every variable, its meaning, and its default. Defaults are taken from `pipeline/
 | `WORKDIR` | Working directory for downloads, the store, the queue, and `routes.json`. | `./work` |
 | `FFMPEG` | ffmpeg command or path. | `ffmpeg` |
 | `YTDLP_COOKIES_BROWSER` | Browser to pull Instagram login cookies from (for example `chrome`). Empty tries without cookies, which often fails. Use a throwaway Instagram account. | (empty) |
+| `CAPTURE_MODE` | How much of the reel to read: `auto` (caption first, video only if thin), `caption` (never download), or `full` (always). | `auto` |
 | `TRANSCRIBE_BACKEND` | Transcription backend: `faster_whisper` or `whisper_cpp`. | `faster_whisper` |
 | `WHISPER_MODEL` | faster-whisper model to load. | `large-v3-turbo` |
 | `WHISPER_CPP_BIN` | Path to the `whisper.cpp` binary (whisper_cpp backend). | (empty) |

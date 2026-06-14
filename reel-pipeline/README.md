@@ -56,6 +56,7 @@ The full provider matrix, model picks, and every setting are in [../docs/CONFIGU
 
 | Var | Meaning |
 |---|---|
+| `CAPTURE_MODE` | `auto` (caption first, fetch the video only if the caption is thin), `caption` (never), or `full` (always) |
 | `BRAIN_PROVIDER` | `gemini` (free), `openai` (OpenAI/OpenRouter/Groq/Ollama), or `anthropic` |
 | `GEMINI_API_KEY` | free Gemini key from aistudio.google.com (or set the OPENAI_* / ANTHROPIC_* keys instead) |
 | `BRAIN_VISION` | on-screen quantity reader: `auto`, `gemini`, `openai`, `anthropic`, or `none` |
