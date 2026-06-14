@@ -31,11 +31,13 @@ flowchart LR
 - `bot.py` the Telegram bot (Den Den Mushi): capture, cards, `/search`, `/digest`, `/dashboard`
 - `web.py` the tile dashboard server
 - `backfill.py` load an Instagram export into the queue
+- `doctor.py` preflight check (`python -m pipeline.doctor`)
 
 **Core**
 - `config.py` env config (12-factor)
 - `routing.py` bucket keys, crew names, and Collection-name routing (overridable via `routes.json`)
 - `schema.py` the extraction schemas and prompts (recipe, place, home)
+- `security.py` bot access control and the download host allow-list (SSRF guard)
 
 **Stages (shared capture)**
 - `download.py` yt-dlp, with a gallery-dl fallback
@@ -43,7 +45,7 @@ flowchart LR
 - `frames.py` ffmpeg scene-frames and a thumbnail
 
 **Extract (the brain)**
-- `brain.py` LLM adapters (claude -p, Gemini), text and vision
+- `brain.py` provider-agnostic LLM adapters (Gemini, OpenAI-compatible, Anthropic), text and vision, with a validate-and-repair loop
 - `geocode.py` free OpenStreetMap geocoding
 
 **Destinations (per-bucket sinks)**
@@ -66,7 +68,7 @@ flowchart LR
 - A new bucket: add it to `routing.NAMES` and a `_process_*` in `process.py`.
 
 ## Why the package is flat
-At 18 modules, each small and clearly named, a flat package stays navigable and avoids import ceremony. We group into subpackages (`destinations/`, `stages/`, and so on) only when one layer passes about five or six modules. None is close yet.
+At 20 modules, each small and clearly named, a flat package stays navigable and avoids import ceremony. We group into subpackages (`destinations/`, `stages/`, and so on) only when one layer passes about five or six modules. None is close yet.
 
 ## Tests
 `reel-pipeline/tests` mirrors the modules. The network and model stages are monkeypatched, so the suite runs fast with no external services. CI runs compile, ruff, and pytest on every push.
