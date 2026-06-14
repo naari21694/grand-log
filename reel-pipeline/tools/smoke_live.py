@@ -45,7 +45,7 @@ def _run(bucket: str, caption: str, transcript: str) -> dict:
         video=str(config.WORKDIR / "nonexistent.mp4"), caption=_cap, handle=_h)
     transcribe.run = lambda video, _t=transcript: _t
     url = f"https://www.instagram.com/reel/SMOKE_{bucket}/"
-    return process.process_one(url, bucket, dry_run=(bucket == "recipe"))
+    return process.process_one(url, bucket, dry_run=(bucket == "recipe"), mode="full")
 
 
 def main() -> int:

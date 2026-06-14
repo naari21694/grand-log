@@ -8,6 +8,8 @@ def _base_patch(monkeypatch, tmp_path):
     monkeypatch.setattr(process.store, "_DB", tmp_path / "items.db")
     monkeypatch.setattr(process.download, "fetch",
                         lambda url: Media(video="v.mp4", caption="cap", handle="chef"))
+    monkeypatch.setattr(process.download, "fetch_meta",
+                        lambda url: Media(video="", caption="cap", handle="chef"))
     monkeypatch.setattr(process.transcribe, "run", lambda video: "transcript")
     monkeypatch.setattr(process.frames, "grab_one", lambda video: "")
 
@@ -88,3 +90,41 @@ def test_home_bucket_routes_to_vault(tmp_path, monkeypatch):
     out = process.process_one("https://x/reel/1/", "home")
     assert out["item"] == "Sofa"
     assert written["item"] == "Sofa"
+
+
+def _track_full(monkeypatch):
+    """Replace the full download with a tracker so a test can assert whether the video was fetched."""
+    fetched = {"full": False}
+    monkeypatch.setattr(process.download, "fetch",
+                        lambda url: fetched.__setitem__("full", True) or Media("v.mp4", "cap", "chef"))
+    monkeypatch.setattr(process.brain, "vision_available", lambda: False)
+    return fetched
+
+
+def test_caption_only_skips_video_when_complete(tmp_path, monkeypatch):
+    _base_patch(monkeypatch, tmp_path)
+    fetched = _track_full(monkeypatch)
+    complete = {"title": "Caption Dish", "base_servings": 2,
+                "ingredients": [{"food": "rice"}], "instructions": ["cook"], "confidence": "high"}
+    monkeypatch.setattr(process.brain, "extract_text", lambda *a, **k: dict(complete))
+    out = process.process_one("https://x/reel/1/", "recipe", dry_run=True, mode="auto")
+    assert out["title"] == "Caption Dish"
+    assert fetched["full"] is False  # a complete caption never downloads the video
+
+
+def test_escalates_to_video_when_caption_thin(tmp_path, monkeypatch):
+    _base_patch(monkeypatch, tmp_path)
+    fetched = _track_full(monkeypatch)
+    thin = {"title": "X", "base_servings": 2, "ingredients": [], "instructions": []}
+    monkeypatch.setattr(process.brain, "extract_text", lambda *a, **k: dict(thin))
+    process.process_one("https://x/reel/1/", "recipe", dry_run=True, mode="auto")
+    assert fetched["full"] is True  # a thin caption forces the video download
+
+
+def test_caption_mode_never_downloads(tmp_path, monkeypatch):
+    _base_patch(monkeypatch, tmp_path)
+    fetched = _track_full(monkeypatch)
+    thin = {"title": "X", "base_servings": 2, "ingredients": [], "instructions": []}
+    monkeypatch.setattr(process.brain, "extract_text", lambda *a, **k: dict(thin))
+    process.process_one("https://x/reel/1/", "recipe", dry_run=True, mode="caption")
+    assert fetched["full"] is False  # caption mode never escalates, even when thin

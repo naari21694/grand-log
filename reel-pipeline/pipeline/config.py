@@ -45,6 +45,11 @@ WHISPER_MODEL = _s("WHISPER_MODEL", "large-v3-turbo")
 WHISPER_CPP_BIN = _s("WHISPER_CPP_BIN")
 WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
 
+# --- capture mode ---
+# auto: read the caption first, download the video and transcribe only if the caption is thin
+# caption: never download the video; full: always download and transcribe
+CAPTURE_MODE = _s("CAPTURE_MODE", "auto")  # auto | caption | full
+
 # --- brain (provider-agnostic; pick one provider, bring your own key) ---
 BRAIN_PROVIDER = _s("BRAIN_PROVIDER", "gemini")  # gemini | openai | anthropic
 BRAIN_VISION = _s("BRAIN_VISION", "auto")        # auto | gemini | openai | anthropic | none
