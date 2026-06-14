@@ -77,14 +77,16 @@ python -m pipeline.web            # then open http://localhost:8080
 ```
 To open it from the bot with `/dashboard`, expose it over HTTPS (a tunnel) and set `WEBAPP_URL` in `.env`. No extra dependencies; it reads the same `work/items.db`.
 
-## Backfill your whole saved list
-Export from Instagram (Accounts Center, Your information and permissions, Download your information, JSON), then queue it. Saved Collection names route each reel.
+## Backfill your whole saved list (offline)
+Export from Instagram (Accounts Center, Your information and permissions, Download your information, choose JSON). The `saved_collections.json` and `saved_posts.json` files already carry each item's URL, caption, and Collection name, so the backfill reads them directly: no Instagram fetch, no cookies, no Whisper.
 ```bash
-python -m pipeline.backfill path/to/saved_posts.json              # queue only
-python -m pipeline.backfill path/to/saved_collections.json --run  # queue and process now
-python -m pipeline.backfill path/to/saved_posts.json --bucket recipe
+python -m pipeline.backfill saved_collections.json                  # preview: counts and routing
+python -m pipeline.backfill saved_collections.json --run --limit 20 # a safe first slice
+python -m pipeline.backfill saved_collections.json --run            # full run (resumable)
 ```
-Parsing matches the common export shape with a regex fallback. Check it against your own file and adjust `_extract` if a key differs. Routing keywords are editable without touching code: drop a `work/routes.json` like `{ "place": ["travel", "trip"], "home": ["decor"] }` to override them.
+Each item is auto-routed: a Collection name with a clear keyword routes for free, otherwise the brain classifies it once per collection. Recipe, place, and home get full extraction from the caption; everything else (art, books, memes) is indexed as a searchable `saved` item, so nothing is lost. An item with no caption, or whose extraction is thin, is recorded in `work/needs_video.jsonl` for a later video pass on a host where Instagram cookies work.
+
+The run is resumable (it skips any URL already saved), so you can stop and restart it, or spread it across sessions to stay under a free-tier daily limit. Set `BACKFILL_SLEEP` to pause between AI calls. Routing keywords are editable without touching code: drop a `work/routes.json` like `{ "place": ["travel", "trip"], "home": ["decor"] }`.
 
 ## 🗾 Log Pose (places)
 Share a travel reel and pick Log Pose, or run it directly:

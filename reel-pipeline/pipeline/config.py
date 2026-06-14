@@ -50,6 +50,9 @@ WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
 # caption: never download the video; full: always download and transcribe
 CAPTURE_MODE = _s("CAPTURE_MODE", "auto")  # auto | caption | full
 
+# --- backfill ---
+BACKFILL_SLEEP = float(_s("BACKFILL_SLEEP", "0") or "0")  # seconds to pause after each AI call
+
 # --- brain (provider-agnostic; pick one provider, bring your own key) ---
 BRAIN_PROVIDER = _s("BRAIN_PROVIDER", "gemini")  # gemini | openai | anthropic
 BRAIN_VISION = _s("BRAIN_VISION", "auto")        # auto | gemini | openai | anthropic | none

@@ -73,6 +73,17 @@ def get(item_id: int) -> dict | None:
     return dict(row) if row else None
 
 
+def exists(source_url: str) -> bool:
+    """True if this source URL is already saved, so a backfill can resume and skip duplicates."""
+    if not source_url:
+        return False
+    init_db()
+    with _conn() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM items WHERE source_url = ? LIMIT 1", (source_url,)).fetchone()
+    return row is not None
+
+
 def sample(limit: int = 5) -> list[dict]:
     """A few items to resurface. Random so the pile does not go stale and the digest stays small."""
     init_db()

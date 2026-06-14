@@ -1,22 +1,14 @@
-{
-  "saved_saved_media": [
-    {
-      "title": "sample_chef",
-      "string_map_data": {
-        "Saved on": {
-          "href": "https://www.instagram.com/reel/SAMPLEPOST01/",
-          "timestamp": 1700000000
-        }
-      }
-    },
-    {
-      "title": "sample_traveller",
-      "string_map_data": {
-        "Saved on": {
-          "href": "https://www.instagram.com/reel/SAMPLEPOST02/",
-          "timestamp": 1700000100
-        }
-      }
-    }
-  ]
-}
+[
+  {
+    "label_values": [
+      {"label": "URL", "value": "https://www.instagram.com/reel/SAMPLEPOST01/", "href": "https://www.instagram.com/reel/SAMPLEPOST01/"},
+      {"label": "Caption", "value": "Crispy chilli paneer, restaurant style, ready in 20 minutes."}
+    ]
+  },
+  {
+    "label_values": [
+      {"label": "URL", "href": "https://www.instagram.com/reel/SAMPLEPOST02/"},
+      {"label": "Caption", "value": "Sunset viewpoint above Lisbon, free entry, go before 7pm."}
+    ]
+  }
+]

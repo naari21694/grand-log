@@ -7,6 +7,13 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+### Added
+- Offline saved-export backfill: `python -m pipeline.backfill <export.json> --run` ingests your Instagram `saved_collections.json` / `saved_posts.json` straight from the captions in the export, with no Instagram fetch, no cookies, and no Whisper. Each item is auto-routed (a Collection-name keyword for free, otherwise the brain classifies once per collection); recipe, place, and home get full extraction, and everything else is indexed as a searchable `saved` item. The run is resumable (skips already-saved URLs) and throttled (`BACKFILL_SLEEP`); items with no caption or a thin extraction are flagged in `work/needs_video.jsonl` for a later video pass. `--limit` runs a safe first slice, and a no-flag run previews counts and routing.
+- Dashboard: a `Saved` filter chip and icon for generically-indexed items.
+
+### Fixed
+- The backfill parser now reads the current nested Instagram export format (a list of collections with `label_values` holding the name, captions, and URLs). The previous parser matched only the older dict shape and silently fell back to a URL regex, which lost every collection's routing.
+
 ## [0.3.0] - 2026-06-14
 
 ### Added
