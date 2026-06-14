@@ -1,15 +1,5 @@
 # 🍳 Grand Log pipeline
 
-```text
-                 .-~~~~~~~~~-.
-               .'             '.
-              /                 \
-          .--'==================='--.
-         /                           \
-         '._________________________.'
-```
-<sub>👒 the engine room of the Straw Hats</sub>
-
 Share an Instagram reel and the value gets extracted and filed: a recipe with exact measurements auto-scaled for 1, 2, 4, 6, 10 in Mealie, a place on your map, or a home idea in your vault. The single-reel core, the Telegram bot (Den Den Mushi), the SQLite queue, the backfill, and the tile dashboard all live here. The module map is in [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
 ```text
