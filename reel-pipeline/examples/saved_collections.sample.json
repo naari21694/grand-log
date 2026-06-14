@@ -1,0 +1,23 @@
+{
+  "saved_collections": [
+    {
+      "title": "Recipes",
+      "string_list_data": [
+        {"href": "https://www.instagram.com/reel/SAMPLERECIPE1/", "timestamp": 1700000000},
+        {"href": "https://www.instagram.com/reel/SAMPLERECIPE2/", "timestamp": 1700000050}
+      ]
+    },
+    {
+      "title": "Japan Travel",
+      "string_list_data": [
+        {"href": "https://www.instagram.com/reel/SAMPLEPLACE1/", "timestamp": 1700000100}
+      ]
+    },
+    {
+      "title": "Home Decor",
+      "string_list_data": [
+        {"href": "https://www.instagram.com/reel/SAMPLEHOME1/", "timestamp": 1700000200}
+      ]
+    }
+  ]
+}

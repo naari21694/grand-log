@@ -1,0 +1,5 @@
+{
+  "place": ["travel", "trip", "japan", "city", "vacation", "itinerary"],
+  "home": ["home", "decor", "furniture", "interior", "apartment"],
+  "recipe": ["recipe", "food", "cook", "meal", "baking"]
+}

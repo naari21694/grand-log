@@ -1,0 +1,24 @@
+# Grand Log on Render. In the dashboard: New > Blueprint, point it at this repo.
+# The bot is a background worker (Telegram long-polling), so it needs no inbound port.
+services:
+  - type: worker
+    name: grand-log-bot
+    runtime: docker
+    rootDir: reel-pipeline
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: python -m pipeline.bot
+    plan: starter
+    disk:
+      name: work
+      mountPath: /app/work
+      sizeGB: 3
+    envVars:
+      - key: BRAIN_PROVIDER
+        value: gemini
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALLOWED_CHAT_IDS
+        sync: false
