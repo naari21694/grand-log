@@ -1,9 +1,9 @@
-"""The recipe schema + extraction prompts, the crown jewel.
+"""The recipe schema and extraction prompts.
 
-RECIPE_SCHEMA is fed to `claude -p --json-schema` (strict) and described to Gemini
-(which runs in JSON mode). Quantities are captured for `base_servings`; Mealie's
-native serving-scaler then renders 1/2/4/6/10 (or any N). `scaling_notes` carries the
-NON-linear guidance Mealie can't compute (salt/spice/leavening/time/pan).
+RECIPE_SCHEMA is sent to whichever brain provider is configured (Gemini, an OpenAI-compatible
+API, or Anthropic) and the returned JSON is validated against it. Quantities are captured for `base_servings`;
+Mealie's native serving-scaler then renders 1/2/4/6/10 (or any N). `scaling_notes` carries the
+non-linear guidance Mealie can't compute (salt, spice, leavening, time, pan).
 """
 import json
 

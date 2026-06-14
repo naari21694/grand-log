@@ -18,6 +18,22 @@ def _s(name: str, default: str = "") -> str:
     return (os.getenv(name) or default).strip()
 
 
+def _bool(name: str, default: bool = False) -> bool:
+    val = _s(name).lower()
+    return val in ("1", "true", "yes", "on") if val else default
+
+
+def _id_set(name: str) -> set[int]:
+    """Parse a comma or space separated list of integer ids (e.g. Telegram chat ids)."""
+    out: set[int] = set()
+    for tok in _s(name).replace(",", " ").split():
+        try:
+            out.add(int(tok))
+        except ValueError:
+            pass
+    return out
+
+
 # --- paths / tools ---
 WORKDIR = Path(_s("WORKDIR", "./work")).resolve()
 FFMPEG = _s("FFMPEG", "ffmpeg")
@@ -29,13 +45,22 @@ WHISPER_MODEL = _s("WHISPER_MODEL", "large-v3-turbo")
 WHISPER_CPP_BIN = _s("WHISPER_CPP_BIN")
 WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
 
-# --- brain (swappable adapters) ---
-BRAIN_TEXT = _s("BRAIN_TEXT", "claude_p")   # claude_p | gemini
-CLAUDE_BIN = _s("CLAUDE_BIN", "claude")
-CLAUDE_MODEL = _s("CLAUDE_MODEL")           # optional override
-BRAIN_VISION = _s("BRAIN_VISION", "gemini")  # gemini | none
+# --- brain (provider-agnostic; pick one provider, bring your own key) ---
+BRAIN_PROVIDER = _s("BRAIN_PROVIDER", "gemini")  # gemini | openai | anthropic
+BRAIN_VISION = _s("BRAIN_VISION", "auto")        # auto | gemini | openai | anthropic | none
+
+# Gemini (free tier): text + vision from one key
 GEMINI_API_KEY = _s("GEMINI_API_KEY")
 GEMINI_MODEL = _s("GEMINI_MODEL", "gemini-2.5-flash")
+
+# OpenAI-compatible: OpenAI, OpenRouter, Groq, Together, DeepSeek, local Ollama / LM Studio
+OPENAI_API_KEY = _s("OPENAI_API_KEY")
+OPENAI_BASE_URL = _s("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+OPENAI_MODEL = _s("OPENAI_MODEL", "gpt-4o-mini")
+
+# Anthropic (official SDK): cheapest reliable extraction = Haiku; set Sonnet/Opus for hard reels
+ANTHROPIC_API_KEY = _s("ANTHROPIC_API_KEY")
+ANTHROPIC_MODEL = _s("ANTHROPIC_MODEL", "claude-haiku-4-5")
 
 # --- destination ---
 MEALIE_URL = _s("MEALIE_URL").rstrip("/")
@@ -44,7 +69,19 @@ MEALIE_TOKEN = _s("MEALIE_TOKEN")
 # --- Den Den Mushi (Telegram bot) ---
 TELEGRAM_BOT_TOKEN = _s("TELEGRAM_BOT_TOKEN")
 
+# --- security ---
+# Lock the bot to its owner. With no ids set and ALLOW_ALL_CHATS off, the bot replies with
+# your chat id and refuses to process until you add it. Never run a public bot unlocked.
+ALLOWED_CHAT_IDS = _id_set("ALLOWED_CHAT_IDS")
+ALLOW_ALL_CHATS = _bool("ALLOW_ALL_CHATS", False)
+# Only these hosts may be downloaded; defends against SSRF via a crafted shared link.
+# Empty falls back to the safe default list in security.py.
+ALLOWED_HOSTS = tuple(h.lower() for h in _s("ALLOWED_HOSTS").replace(",", " ").split())
+
 # --- dashboard (the tile Mini App) ---
 WEBAPP_URL = _s("WEBAPP_URL")  # https URL of the dashboard; enables the /dashboard Mini App button
+DASHBOARD_HOST = _s("DASHBOARD_HOST", "127.0.0.1")  # bind localhost by default; expose via a tunnel
+DASHBOARD_PORT = int(_s("DASHBOARD_PORT", "8080"))
+DASHBOARD_TOKEN = _s("DASHBOARD_TOKEN")  # optional ?token= gate when exposed over a tunnel
 
 WORKDIR.mkdir(parents=True, exist_ok=True)
