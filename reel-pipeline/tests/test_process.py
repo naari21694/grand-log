@@ -22,6 +22,7 @@ def test_dry_run_writes_json_and_returns_recipe(tmp_path, monkeypatch):
     out = process.process_one("https://x/reel/1/", "recipe", dry_run=True)
     assert out["title"] == "Miso Soup"
     assert (tmp_path / "last_recipe.json").exists()
+    assert (tmp_path / "recipes.json").exists()  # the persistent local cookbook
     assert out["_card"]["title"] == "Miso Soup"
 
 
