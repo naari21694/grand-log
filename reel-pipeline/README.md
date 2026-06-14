@@ -56,7 +56,7 @@ The full provider matrix, model picks, and every setting are in [../docs/CONFIGU
 | `ALLOWED_CHAT_IDS` | lock the bot to your Telegram chat id (the bot tells you yours on first message) |
 
 ## Layout
-The full module map, grouped by layer, is in [`../ARCHITECTURE.md`](../ARCHITECTURE.md). In short: entrypoints (`process`, `bot`, `web`, `backfill`), core (`config`, `routing`, `schema`), stages (`download`, `transcribe`, `frames`), extract (`brain`, `geocode`), destinations (`mealie`, `places`, `home`), and data (`queue`, `store`).
+The full module map, grouped by layer, is in [`../ARCHITECTURE.md`](../ARCHITECTURE.md). In short: entrypoints (`process`, `bot`, `web`, `backfill`, `doctor`), core (`config`, `routing`, `schema`, `security`), stages (`download`, `transcribe`, `frames`), extract (`brain`, `geocode`), destinations (`mealie`, `places`, `home`, `recipes`), and data (`queue`, `store`).
 
 ## 🐌 Den Den Mushi (the Telegram bot)
 Share a reel to the bot, tap a crew button (Baratie, Log Pose, Going Merry), and it files the reel, then replies with a card: the thumbnail, the title, a one-line summary, and an Open button to the real destination.
@@ -108,5 +108,4 @@ pytest -q
 The network and model stages are monkeypatched, so the suite runs fast with no external services.
 
 ## Next increments
-1. A live Google Sheets, My Maps, or Notion connector for Log Pose and Going Merry.
-2. Auto-router (one share, zero taps) and resurfacing reminders.
+Considered improvements are tracked in [`../IDEAS.md`](../IDEAS.md).

@@ -7,8 +7,15 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-14
+
 ### Added
-- Local recipe cookbook: on the dry-run or no-Mealie path, recipes are appended to `work/recipes.json` (the full structured list) and `work/recipes.csv` (a summary row each), so they accumulate. Mealie stays the rich destination.
+- Local recipe cookbook: on the dry-run or no-Mealie path, recipes are appended to `work/recipes.json` (the full list) and `work/recipes.csv` (a summary), so they accumulate. Mealie stays the rich destination.
+- Release automation: pushing a `v*` tag builds and pushes a multi-arch image to GHCR and creates a GitHub Release with notes and the source archives (see RELEASING.md).
+- `IDEAS.md`, a tracked list of considered improvements, kept out of the README.
+
+### Changed
+- README restructured to be grounded and navigable: a "what it supports now" section, a requirements-and-where-to-get-them table, a credits section, and a docs nav. Removed the ASCII art; the test-count badge is now the live CI badge.
 
 ### Fixed
 - Recipes were silently lost without Mealie: the dry-run path overwrote `work/last_recipe.json` on every run. It now also appends to the cookbook, so nothing is lost.
@@ -50,5 +57,4 @@ versions may still change behavior.
 - Community kit: AGPL-3.0 plus commercial dual license, CLA, governance ladder, security
   policy, issue and PR templates, and CI.
 
-[0.2.0]: https://github.com/naari21694/grand-log/releases/tag/v0.2.0
-[0.1.0]: https://github.com/naari21694/grand-log/releases/tag/v0.1.0
+[0.3.0]: https://github.com/naari21694/grand-log/releases/tag/v0.3.0
