@@ -2,8 +2,8 @@
 
 The bot and the backfill call process_one(url, bucket). Everything up to the brain is
 shared; the bucket picks the schema and the destination. Every filed item is also recorded
-in the store, so /search and /digest can find it later. The rich result lives in the
-best-of-breed destination (Mealie, a map, a vault); the store is the unified index.
+in the store, so /search and /digest can find it later. The rich result lives in its
+destination (Mealie, a map, a vault); the store is the unified index.
 
     python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
     python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --bucket place
