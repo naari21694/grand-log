@@ -37,6 +37,35 @@ def extract_home(caption: str, transcript: str, url: str, handle: str) -> dict:
     return _extract(prompt, schema.HOME_SCHEMA, schema.HOME_SCHEMA_HINT)
 
 
+# ---------------- auto-router (classify a saved item) ----------------
+_BUCKET_SCHEMA = {
+    "type": "object",
+    "properties": {"bucket": {"type": "string", "enum": ["recipe", "place", "home", "other"]}},
+    "required": ["bucket"],
+}
+_CLASSIFY_PROMPT = """Classify this saved Instagram post into ONE bucket.
+- recipe: food, a dish or drink to cook or make
+- place: a restaurant, cafe, bar, shop, viewpoint, or travel spot to visit
+- home: furniture, decor, materials, or home build and renovation ideas
+- other: anything else (art, memes, fashion, fitness, books, quotes, news)
+
+Saved in collection: {name}
+
+Caption:
+{caption}
+
+Return JSON for this schema: {schema}"""
+
+
+def classify(caption: str, name: str = "") -> str:
+    """Auto-route a saved item to recipe, place, home, or 'saved' (generic) from its caption."""
+    prompt = _CLASSIFY_PROMPT.format(
+        name=name or "(none)", caption=caption[:2000], schema=json.dumps(_BUCKET_SCHEMA))
+    out = _extract(prompt, _BUCKET_SCHEMA, json.dumps(_BUCKET_SCHEMA))
+    bucket = out.get("bucket") if isinstance(out, dict) else None
+    return bucket if bucket in ("recipe", "place", "home") else "saved"
+
+
 # ---------------- text dispatch + repair ----------------
 def _extract(prompt: str, json_schema: dict, schema_hint: str) -> dict:
     record = _call_text(prompt, json_schema, schema_hint)

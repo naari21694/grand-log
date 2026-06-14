@@ -63,7 +63,7 @@ if (tg) {
   if (p.hint_color) s.setProperty('--muted', p.hint_color);
   if (p.button_color) s.setProperty('--accent', p.button_color);
 }
-const EMOJI = {recipe:"\\u{1F373}", place:"\\u{1F5FE}", home:"\\u{1F3E0}"};
+const EMOJI = {recipe:"\\u{1F373}", place:"\\u{1F5FE}", home:"\\u{1F3E0}", saved:"\\u{1F4CC}"};
 const TOKEN = new URLSearchParams(location.search).get("token") || "";
 const api = p => p + (p.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(TOKEN);
 let filter = "all", items = [];
@@ -85,7 +85,7 @@ function render(){
 }
 function chips(){
   const c = document.getElementById("chips"); c.innerHTML = "";
-  for(const [k,label] of [["all","All"],["recipe","\\u{1F373} Baratie"],["place","\\u{1F5FE} Log Pose"],["home","\\u{1F3E0} Going Merry"]]){
+  for(const [k,label] of [["all","All"],["recipe","\\u{1F373} Baratie"],["place","\\u{1F5FE} Log Pose"],["home","\\u{1F3E0} Going Merry"],["saved","\\u{1F4CC} Saved"]]){
     const b=document.createElement("div"); b.className="chip"+(k===filter?" on":"");
     b.textContent=label; b.onclick=()=>{ filter=k; chips(); render(); }; c.appendChild(b);
   }

@@ -62,11 +62,16 @@ def _banner() -> None:
     print()
 
 
-def process_one(url: str, bucket: str = "recipe", dry_run: bool = False, mode: str | None = None) -> dict:
+def process_one(url: str, bucket: str = "recipe", dry_run: bool = False, mode: str | None = None,
+                caption: str | None = None) -> dict:
     mode = mode or config.CAPTURE_MODE
-    print(f"🏴‍☠️  {NAMES.get(bucket, 'Grand Log')} · {bucket} · {mode}")
     extract = {"place": brain.extract_place, "home": brain.extract_home}.get(bucket, brain.extract_text)
-    media, record = _gather(url, bucket, mode, extract)
+    if caption is not None:  # offline path: caption supplied (for example from a saved-data export)
+        print(f"🏴‍☠️  {NAMES.get(bucket, 'Grand Log')} · {bucket} · caption")
+        media, record = download.Media(video="", caption=caption, handle=""), extract(caption, "", url, "")
+    else:
+        print(f"🏴‍☠️  {NAMES.get(bucket, 'Grand Log')} · {bucket} · {mode}")
+        media, record = _gather(url, bucket, mode, extract)
 
     if bucket == "place":
         record = _finish_place(url, media, record)
