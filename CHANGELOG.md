@@ -5,6 +5,14 @@ All notable changes to Grand Log are recorded here. The format follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html). Grand Log is alpha, so minor
 versions may still change behavior.
 
+## [Unreleased]
+
+### Added
+- Local recipe cookbook: on the dry-run or no-Mealie path, recipes are appended to `work/recipes.json` (the full structured list) and `work/recipes.csv` (a summary row each), so they accumulate. Mealie stays the rich destination.
+
+### Fixed
+- Recipes were silently lost without Mealie: the dry-run path overwrote `work/last_recipe.json` on every run. It now also appends to the cookbook, so nothing is lost.
+
 ## [0.2.0] - 2026-06-14
 
 ### Added

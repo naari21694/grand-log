@@ -149,7 +149,7 @@ Recipes are written to a [Mealie](https://mealie.io) cookbook.
 | `MEALIE_URL` | (empty) | Your Mealie base URL. A trailing slash is trimmed. |
 | `MEALIE_TOKEN` | (empty) | A Mealie API token. |
 
-Leaving `MEALIE_URL` empty forces dry-run behavior: the pipeline runs and extracts, but nothing is written to a cookbook. This is the right setting while you are trying things out. The doctor pings Mealie only if `MEALIE_URL` is set, and treats it as advisory.
+Leaving `MEALIE_URL` empty (or using `--dry-run`) skips Mealie and writes recipes to a local cookbook instead: `work/recipes.json` (the full list) and `work/recipes.csv` (a summary). Recipes accumulate, so nothing is lost; this is the zero-setup default while you are trying things out. The doctor pings Mealie only if `MEALIE_URL` is set, and treats it as advisory.
 
 ```bash
 MEALIE_URL=https://mealie.example.com
