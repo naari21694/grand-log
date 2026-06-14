@@ -10,7 +10,7 @@ Share a reel to a Telegram bot. A small crew pulls out the value and files it wh
 ![status](https://img.shields.io/badge/status-alpha-yellow?style=flat-square)
 [![version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)](CHANGELOG.md)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-![tests](https://img.shields.io/badge/tests-73%20passing-brightgreen?style=flat-square)
+[![CI](https://github.com/naari21694/grand-log/actions/workflows/ci.yml/badge.svg)](https://github.com/naari21694/grand-log/actions/workflows/ci.yml)
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
 
@@ -43,7 +43,7 @@ One share, zero typing. The phone never does the heavy work. Everything runs on 
 
 | | Tool | What it does | Status |
 |---|---|---|---|
-| 🍳 | **Baratie** | Recipes into a Mealie cookbook, with exact measurements auto-scaled for 1, 2, 4, 6, 10 people | built |
+| 🍳 | **Baratie** | Recipes into a Mealie cookbook (or a local cookbook file), with exact measurements auto-scaled for 1, 2, 4, 6, 10 people | built |
 | 🗾 | **Log Pose** | Places into map pins (GeoJSON) plus a region-grouped sheet (CSV) | built |
 | 🏠 | **Going Merry** | Home and build-together ideas into a vault (CSV and JSON) | built |
 | 🐌 | **Den Den Mushi** | The Telegram bot you share reels to. Any phone, zero install, identical on iOS and Android | built |
@@ -54,11 +54,10 @@ Crew names are an affectionate One Piece homage. The bucket keys underneath are 
 
 - **AI brains: any key you already have**, through three adapters. Gemini (free tier), any OpenAI-compatible API (OpenAI, OpenRouter, Groq, Together, DeepSeek, or local Ollama), and Anthropic. A validate-and-repair step keeps the output schema-valid even on a small free model.
 - **Three capture modes** (`CAPTURE_MODE`): `auto` reads the caption first and only downloads the video and runs Whisper when the caption is thin; `caption` never downloads; `full` always does.
-- **Destinations:** recipes to Mealie (in dry-run, the structured recipe is written to a file), places to GeoJSON plus CSV for Google My Maps and a sheet, home items to CSV plus JSON for a sheet or Notion.
+- **Destinations:** recipes to Mealie, or to a local cookbook file (`work/recipes.json` plus a CSV summary) when there is no Mealie; places to GeoJSON plus CSV for Google My Maps and a sheet; home items to CSV plus JSON for a sheet or Notion.
 - **Multilingual** transcription (auto-detected: English, Japanese, Hindi, and more).
 - **Any OS** via Python or a Docker image you build, and **any phone** via the Telegram bot.
 - **Source:** Instagram reels and posts today. The downloader (yt-dlp) and the host allow-list already cover TikTok and YouTube, not yet tested end to end.
-- **Project:** 20 small Python modules, 73 passing tests, ruff-clean, v0.2.0, AGPL-3.0.
 
 ## Baratie: a recipe engine, not a bookmark
 
@@ -87,7 +86,7 @@ That extracts from the caption alone (no download, no Whisper) and writes the st
 | ffmpeg | audio and frame extraction | [ffmpeg.org](https://ffmpeg.org/download.html) (Windows: `winget install Gyan.FFmpeg`) | for `auto`/`full` mode; not for caption-only |
 | An AI key | the brain | [Gemini](https://aistudio.google.com/) (free), or [OpenAI](https://platform.openai.com/), [OpenRouter](https://openrouter.ai/), [Groq](https://console.groq.com/), [Anthropic](https://console.anthropic.com/), or local [Ollama](https://ollama.com/) | yes, or run Ollama for none |
 | Telegram bot token | the share front door | [@BotFather](https://t.me/BotFather) | for the bot; not for the CLI |
-| Mealie | the recipe cookbook | [mealie-recipes/mealie](https://github.com/mealie-recipes/mealie) | optional; in dry-run the recipe is written to a file instead |
+| Mealie | the recipe cookbook | [mealie-recipes/mealie](https://github.com/mealie-recipes/mealie) | optional; without it, recipes save to a local cookbook file |
 | Cloudflare Tunnel | expose Mealie and the dashboard safely | [Cloudflare Zero Trust](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) | optional |
 | Instagram cookies | downloads behind the login wall | a throwaway account, exported `cookies.txt` | only if a download is blocked |
 

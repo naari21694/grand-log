@@ -52,6 +52,7 @@ flowchart LR
 - `mealie.py` recipes to a Mealie cookbook
 - `places.py` places to GeoJSON and CSV (My Maps, a sheet)
 - `home.py` home items to CSV and JSON (a sheet, Notion)
+- `recipes.py` recipes to a local cookbook file (JSON and CSV) when there is no Mealie
 
 **Data**
 - `queue.py` the resumable SQLite job queue
@@ -68,7 +69,7 @@ flowchart LR
 - A new bucket: add it to `routing.NAMES` and a `_process_*` in `process.py`.
 
 ## Why the package is flat
-At 20 modules, each small and clearly named, a flat package stays navigable and avoids import ceremony. We group into subpackages (`destinations/`, `stages/`, and so on) only when one layer passes about five or six modules. None is close yet.
+At 21 modules, each small and clearly named, a flat package stays navigable and avoids import ceremony. We group into subpackages (`destinations/`, `stages/`, and so on) only when one layer passes about five or six modules. None is close yet.
 
 ## Tests
 `reel-pipeline/tests` mirrors the modules. The network and model stages are monkeypatched, so the suite runs fast with no external services. CI runs compile, ruff, and pytest on every push.

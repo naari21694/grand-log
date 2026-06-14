@@ -18,7 +18,19 @@ import os
 import sys
 import urllib.parse
 
-from . import brain, config, download, frames, geocode, home, mealie, places, store, transcribe
+from . import (
+    brain,
+    config,
+    download,
+    frames,
+    geocode,
+    home,
+    mealie,
+    places,
+    recipes,
+    store,
+    transcribe,
+)
 from .routing import BUCKETS, NAMES
 
 try:
@@ -134,10 +146,11 @@ def _finish_recipe(url: str, media, recipe: dict, dry_run: bool) -> dict:
     recipe["_thumb"] = (frames.grab_one(media.video) or "") if media.video else ""
 
     if dry_run or not config.MEALIE_URL:
+        recipe["_link"] = ""
         out = config.WORKDIR / "last_recipe.json"
         out.write_text(json.dumps(recipe, indent=2, ensure_ascii=False), encoding="utf-8")
-        recipe["_link"] = ""
-        print(f"\U0001f4dd  dry-run, recipe written to {out}")
+        recipes.append(recipe)  # persistent local cookbook so nothing is lost without Mealie
+        print(f"\U0001f4dd  saved to the local cookbook (work/recipes.json) and {out.name}")
         print(f"   {recipe.get('title')} · serves {recipe.get('base_servings')} · "
               f"{len(recipe.get('ingredients', []))} ingredients · confidence {recipe.get('confidence')}")
         return recipe

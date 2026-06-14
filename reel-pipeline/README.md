@@ -24,7 +24,7 @@ copy .env.example .env              # set GEMINI_API_KEY
 python -m pipeline.doctor          # confirms ffmpeg, your brain key, and access control
 python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
 ```
-This writes `work/last_recipe.json`, the full structured recipe: exact measurements, grams, `scaling_notes`, per-serving nutrition, and a confidence flag. The vision pass reads quantities shown on screen but never spoken, using the same free key. The first run downloads the Whisper model (about 1.5 GB).
+This appends the recipe to your local cookbook (`work/recipes.json`, plus a `recipes.csv` summary) and writes `work/last_recipe.json` (the latest), the full structured recipe: exact measurements, grams, `scaling_notes`, per-serving nutrition, and a confidence flag. The vision pass reads quantities shown on screen but never spoken, using the same free key. The first run downloads the Whisper model (about 1.5 GB).
 
 > Instagram blocks most logged-out downloads. Set `YTDLP_COOKIES_BROWSER=chrome` (or your browser) in `.env`, logged into a throwaway IG account.
 
@@ -105,7 +105,7 @@ It extracts the item (what, room, price, store, link, dimensions, why) and appen
 pip install pytest requests
 pytest -q
 ```
-73 tests. The network and model stages are monkeypatched, so the suite runs fast with no external services.
+The network and model stages are monkeypatched, so the suite runs fast with no external services.
 
 ## Next increments
 1. A live Google Sheets, My Maps, or Notion connector for Log Pose and Going Merry.
