@@ -8,12 +8,16 @@ Welcome aboard. Grand Log stays free and crew-driven, so contributions are genui
 - Docs, examples, translations, triage.
 
 ## Dev setup
-Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [`reel-pipeline/README.md`](reel-pipeline/README.md). Short version:
+Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [`reel-pipeline/README.md`](reel-pipeline/README.md). Quick version:
 ```bash
-cd reel-pipeline && pip install -r requirements.txt   # plus install ffmpeg
-cp .env.example .env
+cd reel-pipeline
+python -m venv .venv && . .venv/bin/activate   # Windows: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt                 # plus install ffmpeg
+cp .env.example .env                            # add a free brain key (Gemini at aistudio.google.com)
+python -m pipeline.doctor                       # confirms ffmpeg, your key, and access control
 python -m pipeline.process "<reel-url>" --dry-run
 ```
+Bring any provider's key (Gemini, OpenAI-compatible, or Anthropic); the full matrix is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
 ## The one rule of this codebase
 If 10 lines do the job as well as 200, write 10. Match the surrounding style. Every stage (download, transcribe, brain, destination) is a swappable adapter, so keep new vendors behind the same small interface.
@@ -23,7 +27,12 @@ snake_case for functions and variables, PascalCase for classes, UPPER_SNAKE for 
 
 ## Workflow
 1. Fork, then branch (`feat/name` or `fix/name`).
-2. Keep the change focused. Run `python -m compileall reel-pipeline/pipeline`.
+2. Keep the change focused, and run the same checks CI does before you push:
+   ```bash
+   cd reel-pipeline
+   python -m ruff check pipeline tests tools
+   python -m pytest -q
+   ```
 3. Open a pull request against `main` with a clear description (link issues, for example `Closes #12`) and example output where useful.
 4. A maintainer reviews. CI and the CLA check must pass. We squash-merge.
 

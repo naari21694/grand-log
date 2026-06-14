@@ -115,7 +115,7 @@ It extracts the item (what, room, price, store, link, dimensions, why) and appen
 pip install pytest requests
 pytest -q
 ```
-70 tests. The network and model stages are monkeypatched, so the suite runs fast with no external services.
+73 tests. The network and model stages are monkeypatched, so the suite runs fast with no external services.
 
 ## Next increments
 1. A live Google Sheets, My Maps, or Notion connector for Log Pose and Going Merry.
