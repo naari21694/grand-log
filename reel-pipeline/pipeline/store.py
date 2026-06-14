@@ -1,7 +1,7 @@
 """Saved-items store: one row per filed reel, for search and resurfacing.
 
 Separate from the job queue. /search and /digest read this, and the future tile
-dashboard will render the same rows. Capture goes into best-of-breed destinations
+dashboard will render the same rows. Capture goes into a destination per kind
 (Mealie, a map, a vault); this is the unified index over all of them.
 """
 from __future__ import annotations

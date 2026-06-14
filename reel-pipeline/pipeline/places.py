@@ -13,10 +13,16 @@ import json
 
 from . import config
 
-_GEOJSON = config.WORKDIR / "places.geojson"
-_CSV = config.WORKDIR / "places.csv"
 _FIELDS = ["name", "category", "region", "city", "country", "price", "why",
            "lat", "lng", "source_url", "creator"]
+
+
+def _csv_path():
+    return config.WORKDIR / "places.csv"
+
+
+def _geojson_path():
+    return config.WORKDIR / "places.geojson"
 
 
 def _row(place: dict) -> dict:
@@ -30,8 +36,9 @@ def append(place: dict) -> None:
 
 
 def _append_csv(place: dict) -> None:
-    new_file = not _CSV.exists()
-    with open(_CSV, "a", newline="", encoding="utf-8") as handle:
+    path = _csv_path()
+    new_file = not path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=_FIELDS)
         if new_file:
             writer.writeheader()
@@ -39,14 +46,15 @@ def _append_csv(place: dict) -> None:
 
 
 def _append_geojson(place: dict) -> None:
+    path = _geojson_path()
     collection = {"type": "FeatureCollection", "features": []}
-    if _GEOJSON.exists():
+    if path.exists():
         try:
-            collection = json.loads(_GEOJSON.read_text(encoding="utf-8"))
+            collection = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             collection = {"type": "FeatureCollection", "features": []}
     feature = {"type": "Feature", "properties": _row(place), "geometry": None}
     if place.get("lat") and place.get("lng"):
         feature["geometry"] = {"type": "Point", "coordinates": [place["lng"], place["lat"]]}
     collection["features"].append(feature)
-    _GEOJSON.write_text(json.dumps(collection, indent=2, ensure_ascii=False), encoding="utf-8")
+    path.write_text(json.dumps(collection, indent=2, ensure_ascii=False), encoding="utf-8")

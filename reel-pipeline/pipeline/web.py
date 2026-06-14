@@ -14,10 +14,8 @@ import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from . import store
+from . import config, store
 from .routing import NAMES
-
-_PORT = int(os.getenv("DASHBOARD_PORT", "8080"))
 
 _PAGE = """<!doctype html>
 <html lang="en">
@@ -66,6 +64,8 @@ if (tg) {
   if (p.button_color) s.setProperty('--accent', p.button_color);
 }
 const EMOJI = {recipe:"\\u{1F373}", place:"\\u{1F5FE}", home:"\\u{1F3E0}"};
+const TOKEN = new URLSearchParams(location.search).get("token") || "";
+const api = p => p + (p.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(TOKEN);
 let filter = "all", items = [];
 const grid = document.getElementById("grid"), empty = document.getElementById("empty");
 function open(url){ if(!url) return; if(tg && tg.openLink) tg.openLink(url); else window.open(url, "_blank"); }
@@ -76,7 +76,7 @@ function render(){
   for(const i of list){
     const tile = document.createElement("div");
     tile.className = "tile"; tile.onclick = () => open(i.link);
-    const thumb = i.has_thumb ? `<img class="thumb" src="/thumb?id=${i.id}" alt="">`
+    const thumb = i.has_thumb ? `<img class="thumb" src="${api('/thumb?id='+i.id)}" alt="">`
                               : `<div class="thumb">${EMOJI[i.bucket]||"\\u{1F4CC}"}</div>`;
     tile.innerHTML = thumb + `<div class="body"><div class="title">${esc(i.title||"Saved")}</div>`
       + `<div class="meta">${EMOJI[i.bucket]||""} ${esc(i.crew)}${i.summary?(" \\u00B7 "+esc(i.summary)):""}</div></div>`;
@@ -90,7 +90,7 @@ function chips(){
     b.textContent=label; b.onclick=()=>{ filter=k; chips(); render(); }; c.appendChild(b);
   }
 }
-async function load(q=""){ const r = await fetch("/api/items"+(q?("?q="+encodeURIComponent(q)):"")); items = await r.json(); render(); }
+async function load(q=""){ const r = await fetch(api("/api/items"+(q?("?q="+encodeURIComponent(q)):""))); items = await r.json(); render(); }
 let timer; document.getElementById("q").addEventListener("input", e=>{ clearTimeout(timer); timer=setTimeout(()=>load(e.target.value.trim()),250); });
 chips(); load();
 </script>
@@ -116,6 +116,11 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
+        if config.DASHBOARD_TOKEN:
+            token = parse_qs(parsed.query).get("token", [""])[0]
+            if token != config.DASHBOARD_TOKEN:
+                self._send(401, b"unauthorized", "text/plain")
+                return
         if parsed.path == "/":
             self._send(200, _PAGE.encode("utf-8"), "text/html; charset=utf-8")
         elif parsed.path == "/api/items":
@@ -144,8 +149,8 @@ class _Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     store.init_db()
-    server = ThreadingHTTPServer(("0.0.0.0", _PORT), _Handler)
-    print(f"Grand Log dashboard on http://localhost:{_PORT}")
+    server = ThreadingHTTPServer((config.DASHBOARD_HOST, config.DASHBOARD_PORT), _Handler)
+    print(f"Grand Log dashboard on http://{config.DASHBOARD_HOST}:{config.DASHBOARD_PORT}")
     server.serve_forever()
 
 

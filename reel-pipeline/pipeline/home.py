@@ -13,10 +13,16 @@ import json
 
 from . import config
 
-_CSV = config.WORKDIR / "home.csv"
-_JSON = config.WORKDIR / "home.json"
 _FIELDS = ["item", "category", "room", "price", "store", "link", "dimensions",
            "color", "why", "source_url", "creator"]
+
+
+def _csv_path():
+    return config.WORKDIR / "home.csv"
+
+
+def _json_path():
+    return config.WORKDIR / "home.json"
 
 
 def _row(item: dict) -> dict:
@@ -30,8 +36,9 @@ def append(item: dict) -> None:
 
 
 def _append_csv(item: dict) -> None:
-    new_file = not _CSV.exists()
-    with open(_CSV, "a", newline="", encoding="utf-8") as handle:
+    path = _csv_path()
+    new_file = not path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=_FIELDS)
         if new_file:
             writer.writeheader()
@@ -39,11 +46,12 @@ def _append_csv(item: dict) -> None:
 
 
 def _append_json(item: dict) -> None:
+    path = _json_path()
     items = []
-    if _JSON.exists():
+    if path.exists():
         try:
-            items = json.loads(_JSON.read_text(encoding="utf-8"))
+            items = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             items = []
     items.append(_row(item))
-    _JSON.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
+    path.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")

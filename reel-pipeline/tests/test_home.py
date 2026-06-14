@@ -10,8 +10,7 @@ ITEM = {
 
 
 def _redirect(tmp_path, monkeypatch):
-    monkeypatch.setattr(home, "_CSV", tmp_path / "home.csv")
-    monkeypatch.setattr(home, "_JSON", tmp_path / "home.json")
+    monkeypatch.setattr(home.config, "WORKDIR", tmp_path)
 
 
 def test_append_writes_csv_header_and_row(tmp_path, monkeypatch):

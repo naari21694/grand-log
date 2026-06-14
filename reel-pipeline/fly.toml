@@ -1,0 +1,23 @@
+# Grand Log (Den Den Mushi bot) on Fly.io. Deploy from this directory (reel-pipeline/):
+#   fly launch --no-deploy
+#   fly volumes create grandlog_work --size 3
+#   fly secrets set TELEGRAM_BOT_TOKEN=... BRAIN_PROVIDER=gemini GEMINI_API_KEY=... ALLOWED_CHAT_IDS=...
+#   fly deploy
+# The bot uses Telegram long-polling, so it needs no inbound port (nothing public is exposed).
+app = "grand-log"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[processes]
+  bot = "python -m pipeline.bot"
+
+[[mounts]]
+  source = "grandlog_work"
+  destination = "/app/work"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory = "2gb"

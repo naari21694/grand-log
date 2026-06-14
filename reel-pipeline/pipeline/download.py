@@ -10,7 +10,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import config
+from . import config, security
 
 
 @dataclass
@@ -40,7 +40,23 @@ def _resolve(path: str) -> str:
     return str(cand[-1]) if cand else path
 
 
+def fetch_meta(url: str) -> Media:
+    """Caption and handle only, no media download (yt-dlp metadata). The caption-first path."""
+    if not security.is_allowed_host(url):
+        raise RuntimeError(f"refusing to fetch a disallowed host: {url}")
+    import yt_dlp
+    with yt_dlp.YoutubeDL({**_ydl_opts(), "skip_download": True}) as ydl:
+        info = ydl.extract_info(url, download=False)
+    return Media(
+        video="",
+        caption=info.get("description") or "",
+        handle=info.get("uploader_id") or info.get("uploader") or "",
+    )
+
+
 def fetch(url: str) -> Media:
+    if not security.is_allowed_host(url):
+        raise RuntimeError(f"refusing to download a disallowed host: {url}")
     try:
         import yt_dlp
         with yt_dlp.YoutubeDL(_ydl_opts()) as ydl:
