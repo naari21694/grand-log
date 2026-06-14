@@ -6,7 +6,8 @@ Grand Log is self-hosted software you run on your own machine. It is built so th
 
 - All your data stays local. Downloaded reels, audio, transcripts, sampled frames, and the structured results are processed and stored only on the box you run Grand Log on. They are never sent to us, because there is no "us" to send them to.
 - Secrets stay local. Every credential (LLM keys, Instagram cookies, Telegram bot token, Mealie token) is read from environment variables or a git-ignored `.env`. None are committed to this repository or sent anywhere except the service you explicitly point them at.
-- No hidden outbound calls. The only network calls Grand Log makes are to the services you configure: the source platform (to download the reel you shared), your chosen LLM or transcription, and your chosen destination (for example your Mealie). Every integration is opt-in and configured by you.
+- No hidden outbound calls. Grand Log only talks to the services you configure: the source platform (to download the reel you shared), the AI provider you chose (the caption, the transcript, and any sampled frames are sent there to be turned into structured data, under that provider's own terms), and your destination (for example your Mealie). Every integration is opt-in and configured by you.
+- Your choice of provider, including none. You decide which AI provider sees your reels. If you want nothing to leave your machine at all, point the brain at a local model (Ollama) and self-host the destinations; the whole pipeline then runs offline on your own box.
 - No accounts, no profiles, no collection. Grand Log does not create an account, build a profile, or collect usage data from anyone who runs it.
 - You own retention. Media and logs live on your disk until you delete them. Logs default to local output only. No automatic cloud backup.
 

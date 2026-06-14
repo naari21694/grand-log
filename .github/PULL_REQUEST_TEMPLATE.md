@@ -6,7 +6,7 @@
 
 ## Checklist
 - [ ] Focused change; matches the house style (lean, 10 lines over 200)
-- [ ] `python -m compileall reel-pipeline/pipeline` and `pytest -q` pass
+- [ ] `ruff check`, `python -m compileall reel-pipeline/pipeline`, and `pytest -q` pass
 - [ ] Docs updated if behavior changed (start at [ARCHITECTURE.md](../ARCHITECTURE.md))
 - [ ] No secrets committed (`.env`, cookies, media)
 - [ ] I agree to the [CLA](../CLA.md)

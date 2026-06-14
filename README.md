@@ -23,7 +23,8 @@
 ![commercial](https://img.shields.io/badge/commercial%20use-license%20required-orange?style=flat-square)
 ![status](https://img.shields.io/badge/status-alpha-yellow?style=flat-square)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-![tests](https://img.shields.io/badge/tests-70%20passing-brightgreen?style=flat-square)
+![tests](https://img.shields.io/badge/tests-73%20passing-brightgreen?style=flat-square)
+[![version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)](CHANGELOG.md)
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
@@ -141,7 +142,7 @@ This is the part the rest skip. Grand Log was designed around it on purpose. (Se
 ## 🧱 What it stands for
 
 - **Free-first.** $0 wherever possible: free-tier cloud, free-tier AI, open source everywhere.
-- **Lean.** If 10 lines do the job as well as 200, it is 10. The whole package is 20 small modules, each under about 180 lines, with 70 passing tests.
+- **Lean.** If 10 lines do the job as well as 200, it is 10. The whole package is 20 small modules, each under about 180 lines, with 73 passing tests.
 - **Swappable.** Every stage is an adapter. Change vendors with one env var.
 - **Capture must end in action.** A recipe you cook, a pin you follow, a home you build. Never a prettier hoard.
 

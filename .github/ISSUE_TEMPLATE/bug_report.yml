@@ -25,7 +25,7 @@ body:
     id: env
     attributes:
       label: Environment
-      placeholder: OS, Python version, BRAIN_TEXT / BRAIN_VISION, transcribe backend
+      placeholder: OS, Python version, BRAIN_PROVIDER, CAPTURE_MODE, transcribe backend
   - type: checkboxes
     id: nosecrets
     attributes:
