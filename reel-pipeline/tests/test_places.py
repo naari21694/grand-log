@@ -10,8 +10,7 @@ PLACE = {
 
 
 def _redirect(tmp_path, monkeypatch):
-    monkeypatch.setattr(places, "_GEOJSON", tmp_path / "places.geojson")
-    monkeypatch.setattr(places, "_CSV", tmp_path / "places.csv")
+    monkeypatch.setattr(places.config, "WORKDIR", tmp_path)
 
 
 def test_append_writes_geojson_point(tmp_path, monkeypatch):
