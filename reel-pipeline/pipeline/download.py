@@ -10,7 +10,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import config
+from . import config, security
 
 
 @dataclass
@@ -41,6 +41,8 @@ def _resolve(path: str) -> str:
 
 
 def fetch(url: str) -> Media:
+    if not security.is_allowed_host(url):
+        raise RuntimeError(f"refusing to download a disallowed host: {url}")
     try:
         import yt_dlp
         with yt_dlp.YoutubeDL(_ydl_opts()) as ydl:

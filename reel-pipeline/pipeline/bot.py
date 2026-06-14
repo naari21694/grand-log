@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import asyncio
 import os
-import re
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
 from telegram.ext import (
@@ -22,21 +21,42 @@ from telegram.ext import (
     filters,
 )
 
-from . import config, queue, store
+from . import config, queue, security, store
 from .process import process_one
 from .routing import BUCKETS, NAMES
 
-_URL = re.compile(r"https?://\S+")
 _EMOJI = {"recipe": "\U0001f373", "place": "\U0001f5fe", "home": "\U0001f3e0"}
 _BUCKETS = [(bucket, f"{_EMOJI.get(bucket, '')} {NAMES[bucket]}".strip()) for bucket in BUCKETS]
 
 
+async def _authorized(update: Update) -> bool:
+    """Gate every interaction to the owner. Unknown chats are told their id, then ignored."""
+    chat = update.effective_chat
+    if chat is None:
+        return False
+    if security.is_allowed_chat(chat.id):
+        return True
+    message = update.effective_message
+    if message:
+        if not config.ALLOWED_CHAT_IDS and not config.ALLOW_ALL_CHATS:
+            await message.reply_text(
+                f"Locked. Your chat id is {chat.id}. Add ALLOWED_CHAT_IDS={chat.id} to your .env "
+                "and restart to start using Grand Log.")
+        else:
+            await message.reply_text("Not authorized.")
+    return False
+
+
 async def on_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """A message with a link: remember it for this chat and offer the crew buttons."""
-    match = _URL.search(update.message.text or "")
-    if not match:
+    if not await _authorized(update):
         return
-    context.chat_data["url"] = match.group(0)
+    url = security.first_allowed_url(update.message.text or "")
+    if not url:
+        await update.message.reply_text(
+            "Send a reel link from a supported site (Instagram, TikTok, YouTube, and similar).")
+        return
+    context.chat_data["url"] = url
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton(label, callback_data=bucket)] for bucket, label in _BUCKETS]
     )
@@ -45,6 +65,8 @@ async def on_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def on_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """A button tap: enqueue the job for the chosen crew member."""
+    if not await _authorized(update):
+        return
     query = update.callback_query
     await query.answer()
     url = context.chat_data.get("url")
@@ -85,6 +107,8 @@ async def _send_card(app: Application, chat_id: int, bucket: str, card: dict) ->
 
 async def on_search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/search <term>: find anything you have saved."""
+    if not await _authorized(update):
+        return
     term = " ".join(context.args).strip()
     if not term:
         await update.message.reply_text("Usage: /search <term>")
@@ -95,6 +119,8 @@ async def on_search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def on_digest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/digest: a few saved items to revisit, the resurfacing nudge."""
+    if not await _authorized(update):
+        return
     rows = store.sample(5)
     if not rows:
         await update.message.reply_text("Nothing saved yet. Share a reel to get started.")
@@ -104,6 +130,8 @@ async def on_digest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def on_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/dashboard: open the tile dashboard, as a Mini App if WEBAPP_URL is an https link."""
+    if not await _authorized(update):
+        return
     url = config.WEBAPP_URL
     if not url:
         await update.message.reply_text(
