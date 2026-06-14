@@ -1,182 +1,143 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a2980,100:26d0ce&height=220&section=header&text=Grand%20Log&fontSize=84&fontColor=ffffff&animation=fadeIn&fontAlignY=38" width="100%" alt="Grand Log"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a2980,100:26d0ce&height=200&section=header&text=Grand%20Log&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38" width="100%" alt="Grand Log"/>
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3500&pause=800&center=true&width=760&color=26D0CE&lines=Share+a+reel.+Forget+it.;Grand+Log+never+forgets.;A+recipe+you+can+cook+tonight.;A+pin+on+your+map.;An+idea+in+your+vault.;Your+saved+folder%2C+finally+working.)](https://github.com/naari21694/grand-log)
+### Turn the Instagram reels you save and forget into a cookbook, a map, and a vault.
 
-```text
-                 .-~~~~~~~~~-.
-               .'             '.
-              /                 \
-          .--'==================='--.
-         /                           \
-         '._________________________.'
-```
-
-<sub>👒 the mugiwara mark, full yellow on a real terminal</sub>
-
-### Turn the reels you save and forget into a cookbook, a map, and a vault.
-
-**Share a reel to a Telegram bot. A small crew pulls out the value and files it where you will actually use it.** Self-hosted. Free. Runs on any OS. Triggered from any phone.
+Share a reel to a Telegram bot. A small crew pulls out the value and files it where you will use it: a recipe you can cook, a place on your map, an idea in your vault. Self-hosted, free, and runs on any OS, triggered from any phone.
 
 ![license](https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square)
-![commercial](https://img.shields.io/badge/commercial%20use-license%20required-orange?style=flat-square)
 ![status](https://img.shields.io/badge/status-alpha-yellow?style=flat-square)
+[![version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)](CHANGELOG.md)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![tests](https://img.shields.io/badge/tests-73%20passing-brightgreen?style=flat-square)
-[![version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)](CHANGELOG.md)
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
-![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
 
-<br>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:f6c343,100:f0a500&height=46&section=header&text=Set%20sail%20with%20the%20Straw%20Hats&fontSize=20&fontColor=20232a&fontAlignY=55" width="100%" alt="Set sail with the Straw Hats"/>
+**[Install](docs/INSTALL.md)  ·  [Configure](docs/CONFIGURATION.md)  ·  [Deploy](docs/DEPLOY.md)  ·  [Architecture](ARCHITECTURE.md)  ·  [Security](SECURITY.md)  ·  [Ideas](IDEAS.md)  ·  [Changelog](CHANGELOG.md)  ·  [Contribute](CONTRIBUTING.md)**
 
 </div>
 
 ---
 
-## ☠️ You are sitting on a graveyard of saved reels
+## The problem
 
-A recipe you swore you would cook. A restaurant you swore you would try. A shelf you swore you would build. They are all in a folder you will never open again. Saving felt like doing something. It was not. More than 80% of saved posts are never opened twice. The hard part was never the saving. It was pulling the value out and putting it somewhere you would actually reach for it. Nobody does that part.
+You save hundreds of reels: a recipe you meant to cook, a restaurant you meant to try, a shelf you meant to build. They sit in a folder you never reopen. Saving is easy. The hard part, pulling the value out and filing it somewhere you will actually reach for, is the part nobody does. Grand Log is that missing step.
 
-**Grand Log is the crew that does it for you.**
-
-Share a reel. Grand Log watches the video, reads the caption, listens to the audio, and reads the text on the screen. Then it files the treasure where it belongs: a recipe you can cook tonight, a pin on your map, an idea in your vault. The folder you forgot becomes a tool you use.
-
-## 🧭 How it works
+## How it works
 
 ```mermaid
 flowchart LR
-    A([📱 Share a reel]) --> B[🐌 Den Den Mushi<br/>Telegram bot]
-    B --> C[grab · transcribe<br/>read on-screen text]
-    C --> D[🧠 Brain<br/>extract and structure]
+    A([Share a reel]) --> B[Den Den Mushi<br/>Telegram bot]
+    B --> C[read caption,<br/>and video if needed]
+    C --> D[Brain<br/>extract and structure]
     D --> E{route}
-    E --> F[🍳 Baratie<br/>cookbook]
-    E --> G[🗾 Log Pose<br/>map and sheet]
-    E --> H[🏠 Going Merry<br/>vault]
+    E --> F[Baratie<br/>cookbook]
+    E --> G[Log Pose<br/>map and sheet]
+    E --> H[Going Merry<br/>vault]
 ```
 
-One share. Zero typing. The phone never does the heavy work. Everything runs on your own box, with your own keys, and nothing ever phones home.
+One share, zero typing. The phone never does the heavy work. Everything runs on your own box, with your own keys, and nothing phones home.
 
-## 🐉 Meet the crew
+## The crew
 
 | | Tool | What it does | Status |
 |---|---|---|---|
-| 🍳 | **Baratie** | Recipes into a Mealie cookbook with exact measurements, auto-scaled for 1, 2, 4, 6, 10 people | built |
-| 🗾 | **Log Pose** | Places into map pins (GeoJSON) plus a region-grouped sheet (CSV) you import in two clicks | built |
-| 🏠 | **Going Merry** | Home and build-together ideas into an organized vault (CSV and JSON) | built |
+| 🍳 | **Baratie** | Recipes into a Mealie cookbook, with exact measurements auto-scaled for 1, 2, 4, 6, 10 people | built |
+| 🗾 | **Log Pose** | Places into map pins (GeoJSON) plus a region-grouped sheet (CSV) | built |
+| 🏠 | **Going Merry** | Home and build-together ideas into a vault (CSV and JSON) | built |
 | 🐌 | **Den Den Mushi** | The Telegram bot you share reels to. Any phone, zero install, identical on iOS and Android | built |
 
-Brand names are an affectionate One Piece homage. Under the hood the keys are plain: `recipe`, `place`, `home`.
+Crew names are an affectionate One Piece homage. The bucket keys underneath are plain: `recipe`, `place`, `home`.
 
-<div align="center">
+## What it supports right now
 
-```text
-            .  N  .
-         NW  \ | /  NE
-        W ----( + )---- E
-         SW  / | \  SE
-            '  S  '
-```
+- **AI brains: any key you already have**, through three adapters. Gemini (free tier), any OpenAI-compatible API (OpenAI, OpenRouter, Groq, Together, DeepSeek, or local Ollama), and Anthropic. A validate-and-repair step keeps the output schema-valid even on a small free model.
+- **Three capture modes** (`CAPTURE_MODE`): `auto` reads the caption first and only downloads the video and runs Whisper when the caption is thin; `caption` never downloads; `full` always does.
+- **Destinations:** recipes to Mealie (in dry-run, the structured recipe is written to a file), places to GeoJSON plus CSV for Google My Maps and a sheet, home items to CSV plus JSON for a sheet or Notion.
+- **Multilingual** transcription (auto-detected: English, Japanese, Hindi, and more).
+- **Any OS** via Python or a Docker image you build, and **any phone** via the Telegram bot.
+- **Source:** Instagram reels and posts today. The downloader (yt-dlp) and the host allow-list already cover TikTok and YouTube, not yet tested end to end.
+- **Project:** 20 small Python modules, 73 passing tests, ruff-clean, v0.2.0, AGPL-3.0.
 
-<sub>🧭 Log Pose always points back to the treasure</sub>
-
-</div>
-
-## 🍳 Baratie: a recipe engine, not a bookmark
-
-Most reel-to-recipe tools give you a wall of text. Baratie gives you a recipe you can cook.
+## Baratie: a recipe engine, not a bookmark
 
 - **Exact measurements** from the caption, the audio, and the on-screen text. The vision pass reads quantities that flash on screen and are never spoken.
-- **Real scaling.** Ingredients land as structured `quantity + unit + food`, so Mealie's slider renders 1, 2, 4, 6, or 10 servings natively. Then Baratie adds the part a slider cannot: the non-linear notes for salt, spice, leavening, cook time, and pan size when you double a batch.
-- **Canonical grams + dual units, per-serving nutrition, tags, and a confidence flag** on anything the reel left ambiguous.
-- **Multilingual.** English, Japanese, Hindi, and more, transcribed and translated on the way in.
-- **Swappable everything.** Brain, transcriber, and destination are each one line in `.env`.
+- **Real scaling.** Ingredients land as structured `quantity + unit + food`, so Mealie's slider renders any serving count, and Baratie adds the part a slider cannot: the non-linear notes for salt, spice, leavening, cook time, and pan size when you change the batch.
+- **Canonical grams plus dual units, per-serving nutrition, tags, and a confidence flag** on anything the reel left ambiguous.
 
-## 🚀 Quick start
+## Quick start
 
 ```bash
 cd reel-pipeline
 python -m venv .venv && . .venv/bin/activate      # Windows: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt                    # plus install ffmpeg
-cp .env.example .env                               # add a free Gemini key from aistudio.google.com
-python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
+cp .env.example .env                               # add a free Gemini key (aistudio.google.com)
+python -m pipeline.doctor                          # checks ffmpeg, your key, and access control
+python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --no-video --dry-run
 ```
 
-That writes `work/last_recipe.json`, the full structured recipe with measurements, grams, scaling notes, and per-serving nutrition. Add `MEALIE_URL` and `MEALIE_TOKEN`, drop `--dry-run`, and it lands in a real cookbook you can open on your phone.
+That extracts from the caption alone (no download, no Whisper) and writes the structured result to `work/`. Drop `--no-video` to let it read the video when the caption is thin. Add `MEALIE_URL` and `MEALIE_TOKEN` and drop `--dry-run` to land recipes in a real cookbook. The step-by-step guide is [docs/INSTALL.md](docs/INSTALL.md); every setting is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
-> New here? Follow [docs/INSTALL.md](docs/INSTALL.md) step by step. Bring any AI key you already have: every provider (Gemini, OpenAI, OpenRouter, Groq, Ollama, Anthropic) and every setting is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md). Cloud deploy in one click: [docs/DEPLOY.md](docs/DEPLOY.md).
+## Requirements and where to get them
 
-<details>
-<summary>📦 <b>Install on any OS, trigger from any phone, upgrade in one command</b></summary>
+| Need | What it is | Where to get it | Required? |
+|---|---|---|---|
+| Python 3.10+ | the runtime | [python.org](https://www.python.org/downloads/) | yes |
+| ffmpeg | audio and frame extraction | [ffmpeg.org](https://ffmpeg.org/download.html) (Windows: `winget install Gyan.FFmpeg`) | for `auto`/`full` mode; not for caption-only |
+| An AI key | the brain | [Gemini](https://aistudio.google.com/) (free), or [OpenAI](https://platform.openai.com/), [OpenRouter](https://openrouter.ai/), [Groq](https://console.groq.com/), [Anthropic](https://console.anthropic.com/), or local [Ollama](https://ollama.com/) | yes, or run Ollama for none |
+| Telegram bot token | the share front door | [@BotFather](https://t.me/BotFather) | for the bot; not for the CLI |
+| Mealie | the recipe cookbook | [mealie-recipes/mealie](https://github.com/mealie-recipes/mealie) | optional; in dry-run the recipe is written to a file instead |
+| Cloudflare Tunnel | expose Mealie and the dashboard safely | [Cloudflare Zero Trust](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) | optional |
+| Instagram cookies | downloads behind the login wall | a throwaway account, exported `cookies.txt` | only if a download is blocked |
 
-<br>
+## Then it gets out of your way
 
-- **Any OS.** A multi-arch Docker image runs identically on Linux, macOS, Windows, and Raspberry Pi. The CLI image works today (`docker run grand-log "<reel>" --dry-run`). The one-command `docker compose up -d` service ships with Den Den Mushi.
-- **Any phone.** The trigger is a Telegram bot. Nothing to install, identical on iOS, Android, and web. Your phone never runs the heavy work.
-- **One-click cloud.** Deploy buttons for Railway, Render, and Fly are on the roadmap.
-- **One-command upgrade.** `docker compose pull && docker compose up -d`, or automatic with Watchtower.
+Capture is one front door; what you save fans out to the tool built for it, and one hub indexes all of it.
 
-</details>
-
-## 🗺️ Then it gets out of your way
-
-Capture is one front door. What you saved fans out to the tool built for it, and a single hub indexes all of it.
-
-- **A rich card the moment you share:** thumbnail, title, a one-line summary, and an Open button straight to the destination.
-- **`/search`** across everything you ever saved, in one place.
-- **`/digest`** resurfaces a few saves to revisit, because a save that never resurfaces is a save you lost. Resurfacing is the single most-requested fix in the whole save-for-later space, and it is built in from day one.
+- **A rich card the moment you share:** thumbnail, title, a one-line summary, and an Open button to the destination.
+- **`/search`** across everything you ever saved.
+- **`/digest`** resurfaces a few saves to revisit, because a save that never resurfaces is a save you lost.
 - **A tile dashboard** of every save, in any phone browser or as a Telegram Mini App.
 
-This is the part the rest skip. Grand Log was designed around it on purpose. (See [docs/research-oss-android-apps.md](docs/research-oss-android-apps.md) for the user research that drove the design.)
+The design behind this is in [docs/research-oss-android-apps.md](docs/research-oss-android-apps.md).
 
-## 🔐 Yours, and only yours
+## Yours, and only yours
 
-- **No telemetry. No analytics. It never phones home.** See [PRIVACY.md](PRIVACY.md).
-- Everything runs on your infrastructure with your keys. Secrets live in a git-ignored `.env`, never in the repo.
-- **Locked down by default.** The bot answers only your own Telegram chat, only known video hosts are ever downloaded (SSRF guard), and the dashboard binds to localhost. Run `python -m pipeline.doctor` to confirm. Full checklist in [SECURITY.md](SECURITY.md).
-- **Supply-chain hardened:** CodeQL scanning, OpenSSF Scorecard, Dependabot, signed releases, least-privilege CI. See [SECURITY.md](SECURITY.md).
+- **No telemetry, no analytics, it never phones home.** See [PRIVACY.md](PRIVACY.md). You choose which AI provider sees your reels, or run Ollama so nothing leaves your machine.
+- Everything runs on your infrastructure with your keys. Secrets live in a git-ignored `.env`.
+- **Locked down by default:** the bot answers only your own Telegram chat, only known video hosts are downloaded (SSRF guard), and the dashboard binds to localhost. Run `python -m pipeline.doctor` to confirm. Full checklist in [SECURITY.md](SECURITY.md).
+- Supply-chain workflows: CodeQL scanning, OpenSSF Scorecard, and Dependabot.
 
-## 🧱 What it stands for
+## Honest positioning
 
-- **Free-first.** $0 wherever possible: free-tier cloud, free-tier AI, open source everywhere.
-- **Lean.** If 10 lines do the job as well as 200, it is 10. The whole package is 20 small modules, each under about 180 lines, with 73 passing tests.
-- **Swappable.** Every stage is an adapter. Change vendors with one env var.
-- **Capture must end in action.** A recipe you cook, a pin you follow, a home you build. Never a prettier hoard.
+Grand Log is not the first to turn a reel into a recipe, a save into a map pin, or a post into an AI vault. Those exist, as SaaS (ReciMe, Triply, Preplo) and as open source, the closest being [`pickeld/social_recipes`](https://github.com/pickeld/social_recipes), [`Peter-SB/n8n-ai-instagram-scraper`](https://github.com/Peter-SB/n8n-ai-instagram-scraper), and [Karakeep](https://github.com/karakeep-app/karakeep). What we have not found elsewhere: one self-hosted pipeline, on your own AI credits, fanning out to purpose-built destinations, with disciplined recipe scaling and resurfacing, plus a backfill that re-files your whole Instagram history using your saved Collection names as the router.
 
-## 🧭 Honest by default
+## Status and ideas
 
-Grand Log is not the first to turn a reel into a recipe, a save into a map pin, or a post into an AI vault. Those exist, as SaaS (ReciMe, Triply, Preplo) and as open source. The closest cousins: [`pickeld/social_recipes`](https://github.com/pickeld/social_recipes), [`Peter-SB/n8n-ai-instagram-scraper`](https://github.com/Peter-SB/n8n-ai-instagram-scraper), and [Karakeep](https://github.com/karakeep-app/karakeep).
+What is built is in the table above and in the [CHANGELOG](CHANGELOG.md). What we are thinking about next (caption-first onboarding wins, a prebuilt image, auto-router, resurfacing reminders, more platforms, new buckets) lives in [IDEAS.md](IDEAS.md), kept separate so this README stays a map, not a list of promises.
 
-What no one else assembles: one self-hosted pipeline, on your own AI credits, fanning out to purpose-built destinations, with disciplined recipe scaling and resurfacing built in, plus a backfill that re-files your entire Instagram history using your own saved Collection names as the router. That last trick we have not found anywhere else.
+## Credits
 
-## 🙏 Standing on giants
+Grand Log is assembly, not invention. It stands on these projects, each invoked as a separate tool, never bundled or modified:
 
-All invoked as separate tools, never bundled or modified:
-[yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [gallery-dl](https://github.com/mikf/gallery-dl) (GPL-2.0), [FFmpeg](https://ffmpeg.org) (LGPL/GPL), [faster-whisper](https://github.com/SYSTRAN/faster-whisper), [whisper.cpp](https://github.com/ggml-org/whisper.cpp), [OpenAI Whisper](https://github.com/openai/whisper) (MIT), [Mealie](https://github.com/mealie-recipes/mealie), [Tandoor](https://github.com/TandoorRecipes/recipes) (AGPL), [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) (LGPL), Gemini, and Claude.
+- **Download:** [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [gallery-dl](https://github.com/mikf/gallery-dl) (GPL-2.0)
+- **Media and audio:** [FFmpeg](https://ffmpeg.org) (LGPL/GPL), [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (MIT), [whisper.cpp](https://github.com/ggml-org/whisper.cpp) (MIT), [OpenAI Whisper](https://github.com/openai/whisper) (MIT)
+- **Bot and runtime:** [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) (LGPL-3.0), [requests](https://github.com/psf/requests) (Apache-2.0), [python-dotenv](https://github.com/theskumar/python-dotenv) (BSD-3), [anthropic SDK](https://github.com/anthropics/anthropic-sdk-python) (MIT)
+- **Destinations:** [Mealie](https://github.com/mealie-recipes/mealie) (AGPL-3.0), [Tandoor](https://github.com/TandoorRecipes/recipes) (AGPL-3.0)
+- **AI providers:** Google Gemini, OpenAI, Anthropic, and OpenAI-compatible hosts (OpenRouter, Groq, Together) and local Ollama, used with your own keys.
+- **Geocoding:** [OpenStreetMap Nominatim](https://nominatim.org/).
+- **README visuals:** [capsule-render](https://github.com/kyechan99/capsule-render), [contrib.rocks](https://contrib.rocks), [star-history](https://star-history.com).
 
-## 🗓️ Roadmap
+Prior art that shaped the honest positioning is credited above. The crew names are a fan homage to One Piece (© Oda, Shueisha, Toei), used as codenames, not trademark claims.
 
-- [x] **Baratie** core pipeline (single-reel, dry-run testable)
-- [x] **Den Den Mushi**: Telegram bot, SQLite queue, worker, and Docker compose
-- [x] Backlog backfill from your Instagram data export (saved Collections become routes)
-- [x] **Log Pose** v1: places to a GeoJSON and region CSV for My Maps and a sheet
-- [x] **Going Merry** v1: home ideas to a CSV and JSON vault for a sheet or Notion
-- [x] **Hub**: rich capture cards, `/search` across everything, `/digest` resurfacing
-- [x] **Dashboard**: a clean tile view of everything, in the browser or as a Telegram Mini App
-- [ ] One-click cloud deploy, auto-router (one share, zero taps), resurfacing reminders, more platforms (TikTok, Shorts)
+## Contributing
 
-## 🤝 Join the crew
+Anyone can contribute by fork and pull request. Trusted contributors climb a transparent, rules-based ladder (Contributor, Triager, Reviewer, Maintainer). Start with [ARCHITECTURE.md](ARCHITECTURE.md), then [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md). Be kind: [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Grand Log wants a real crew. Anyone can contribute by fork and pull request. Trusted contributors climb a transparent, rules-based ladder (Contributor, Triager, Reviewer, Maintainer) with measurable promotion criteria. Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [GOVERNANCE.md](GOVERNANCE.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Be kind: [Code of Conduct](CODE_OF_CONDUCT.md).
+## License
 
-## 📜 License
-
-Open source under [AGPL-3.0](LICENSE): free to use, modify, self-host, and build on, forever, as long as your version stays open too. Building a commercial or closed-source product on it needs a separate commercial license, see [LICENSING.md](LICENSING.md). Dual-licensing keeps Grand Log free and community-driven while ensuring anyone who profits from it gives back.
-
-> "Grand Log" is the brand. The crew (Baratie, Log Pose, Den Den Mushi, Going Merry) are an affectionate fan homage to One Piece (© Oda, Shueisha, Toei). They are codenames, not trademark claims.
+Open source under [AGPL-3.0](LICENSE): free to use, modify, self-host, and build on, as long as your version stays open too. A commercial or closed-source product on top needs a separate commercial license, see [LICENSING.md](LICENSING.md).
 
 ---
 
@@ -190,10 +151,6 @@ Open source under [AGPL-3.0](LICENSE): free to use, modify, self-host, and build
 ### Star history
 [![Star History Chart](https://api.star-history.com/svg?repos=naari21694/grand-log&type=Date)](https://star-history.com/#naari21694/grand-log&Date)
 
-<br>
-
-**Free to use. Free to build on. Open forever. Profit from it, give back.** 🏴‍☠️
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:26d0ce,100:1a2980&height=120&section=footer" width="100%" alt=""/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:26d0ce,100:1a2980&height=110&section=footer" width="100%" alt=""/>
 
 </div>
