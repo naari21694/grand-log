@@ -5,7 +5,7 @@ What we have considered for Grand Log, kept separate from the README so the READ
 ## Make it easier to spin up (onboarding)
 In build order, biggest and most-real first:
 
-1. **Local cookbook for recipes, plus Mealie in compose.** Today a no-Mealie dry-run writes `work/last_recipe.json` and overwrites it every run, so recipes are not kept. Append recipes to a local file, and bundle Mealie in `compose.yaml`, so recipes work end to end with no extra service. This closes a real data-loss gap, so it goes first.
+1. **Bundle Mealie in compose.** The local recipe cookbook is done (see the [CHANGELOG](CHANGELOG.md)): on the no-Mealie path recipes append to `work/recipes.json` and `work/recipes.csv`, so nothing is lost. Still open: bundle Mealie in `compose.yaml` so the rich destination also works end to end with no extra manual service.
 2. **Mode-aware doctor.** `auto` and `caption` modes need no ffmpeg, no Whisper, and no cookies for public reels. The preflight should require ffmpeg only for `full` mode and treat cookies and Whisper as progressive, so the lightest path is not blocked by a dependency it does not use.
 3. **Split dependencies** into a small core plus optional extras (`whisper`, `bot`, `anthropic`), so the caption-first plus Gemini path installs light and fast instead of pulling the whole tree.
 4. **A prebuilt multi-arch image on GHCR,** published on release, so setup becomes `docker run` or `docker compose up` with no Python, pip, ffmpeg, or build step.
