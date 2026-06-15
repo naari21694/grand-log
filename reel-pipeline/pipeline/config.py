@@ -38,17 +38,32 @@ def _id_set(name: str) -> set[int]:
 WORKDIR = Path(_s("WORKDIR", "./work")).resolve()
 FFMPEG = _s("FFMPEG", "ffmpeg")
 YTDLP_COOKIES_BROWSER = _s("YTDLP_COOKIES_BROWSER")  # e.g. "chrome"; empty = no cookies
+# A Netscape cookies.txt from a throwaway account; sidesteps the Windows DPAPI browser-cookie
+# limitation. Defaults to work/cookies.txt if present, so dropping the file in just works.
+YTDLP_COOKIES_FILE = _s("YTDLP_COOKIES_FILE") or (
+    str(WORKDIR / "cookies.txt") if (WORKDIR / "cookies.txt").exists() else "")
 
 # --- transcription ---
-TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp
+TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp | groq
 WHISPER_MODEL = _s("WHISPER_MODEL", "large-v3-turbo")
+WHISPER_DEVICE = _s("WHISPER_DEVICE", "auto")   # auto: cuda if an NVIDIA GPU is present, else cpu
+WHISPER_COMPUTE = _s("WHISPER_COMPUTE")         # blank: int8_float16 on cuda, int8 on cpu
 WHISPER_CPP_BIN = _s("WHISPER_CPP_BIN")
 WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
+# Groq: free, fast cloud Whisper (OpenAI-compatible). Set TRANSCRIBE_BACKEND=groq + GROQ_API_KEY
+# (free at console.groq.com) to move transcription off the local CPU.
+GROQ_API_KEY = _s("GROQ_API_KEY")
+GROQ_WHISPER_MODEL = _s("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")
 
 # --- capture mode ---
 # auto: read the caption first, download the video and transcribe only if the caption is thin
 # caption: never download the video; full: always download and transcribe
 CAPTURE_MODE = _s("CAPTURE_MODE", "auto")  # auto | caption | full
+
+# --- media archive ---
+# Keep the downloaded video, sampled frames, and thumbnail after extraction (your local archive).
+# Set false to delete them once extraction is done and save disk.
+KEEP_MEDIA = _bool("KEEP_MEDIA", True)
 
 # --- backfill ---
 BACKFILL_SLEEP = float(_s("BACKFILL_SLEEP", "0") or "0")  # seconds to pause after each AI call

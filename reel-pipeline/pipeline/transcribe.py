@@ -30,6 +30,8 @@ def _to_wav(video: str) -> str:
 def run(video: str) -> str:
     try:
         wav = _to_wav(video)
+        if config.TRANSCRIBE_BACKEND == "groq":
+            return _groq(wav)
         if config.TRANSCRIBE_BACKEND == "whisper_cpp":
             return _whisper_cpp(wav)
         return _faster_whisper(wav)
@@ -38,11 +40,63 @@ def run(video: str) -> str:
         return ""
 
 
+def _groq(audio: str) -> str:
+    """Free, fast cloud Whisper via Groq's OpenAI-compatible transcriptions endpoint."""
+    import requests
+    if not config.GROQ_API_KEY:
+        raise RuntimeError("GROQ_API_KEY is not set. Get a free key at console.groq.com.")
+    with open(audio, "rb") as handle:
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {config.GROQ_API_KEY}"},
+            files={"file": (Path(audio).name, handle, "audio/wav")},
+            data={"model": config.GROQ_WHISPER_MODEL, "response_format": "json"},
+            timeout=120,
+        )
+    resp.raise_for_status()
+    return (resp.json().get("text") or "").strip()
+
+
+def _device() -> str:
+    if config.WHISPER_DEVICE != "auto":
+        return config.WHISPER_DEVICE
+    try:
+        import ctranslate2
+        return "cuda" if ctranslate2.get_cuda_device_count() > 0 else "cpu"
+    except Exception:
+        return "cpu"
+
+
+def _add_cuda_dlls() -> None:
+    """Windows: put the pip-installed CUDA libs (cuBLAS, cuDNN) on the DLL search path."""
+    import os
+    import sys
+    if sys.platform != "win32":
+        return
+    try:
+        import nvidia
+    except Exception:
+        return
+    for base in getattr(nvidia, "__path__", []):  # nvidia is a namespace package (__file__ is None)
+        for sub in ("cublas/bin", "cudnn/bin"):
+            directory = Path(base) / sub
+            if directory.is_dir():
+                try:
+                    os.add_dll_directory(str(directory))
+                except OSError:
+                    pass
+
+
 def _faster_whisper(wav: str) -> str:
     global _model
     from faster_whisper import WhisperModel
     if _model is None:
-        _model = WhisperModel(config.WHISPER_MODEL, device="cpu", compute_type="int8")
+        device = _device()
+        if device == "cuda":
+            _add_cuda_dlls()
+        compute = config.WHISPER_COMPUTE or ("int8_float16" if device == "cuda" else "int8")
+        _model = WhisperModel(config.WHISPER_MODEL, device=device, compute_type=compute)
+        print(f"   whisper on {device} ({compute})")
     segments, _ = _model.transcribe(wav, language=None, vad_filter=True)
     return " ".join(s.text.strip() for s in segments).strip()
 
