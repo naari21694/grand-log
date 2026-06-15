@@ -7,12 +7,27 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-15
+
 ### Added
-- Offline saved-export backfill: `python -m pipeline.backfill <export.json> --run` ingests your Instagram `saved_collections.json` / `saved_posts.json` straight from the captions in the export, with no Instagram fetch, no cookies, and no Whisper. Each item is auto-routed (a Collection-name keyword for free, otherwise the brain classifies once per collection); recipe, place, and home get full extraction, and everything else is indexed as a searchable `saved` item. The run is resumable (skips already-saved URLs) and throttled (`BACKFILL_SLEEP`); items with no caption or a thin extraction are flagged in `work/needs_video.jsonl` for a later video pass. `--limit` runs a safe first slice, and a no-flag run previews counts and routing.
+- GPU transcription: faster-whisper auto-detects an NVIDIA GPU (`WHISPER_DEVICE=auto`) and runs on CUDA, much faster than CPU, with the Windows cuDNN/cuBLAS libraries loaded automatically. Force with `WHISPER_DEVICE=cpu|cuda`.
+- Groq Whisper backend (`TRANSCRIBE_BACKEND=groq`): free, fast cloud transcription that runs off the local machine.
+- `cookies.txt` support: a Netscape cookies file (default `work/cookies.txt`) is auto-detected and takes precedence over browser cookies, which sidesteps the Windows DPAPI browser-cookie failure.
+- Full-frame vision for every crew: the vision pass now reads all on-screen text (names, addresses, prices, dimensions, quantities, steps) for recipe, place, and home. Places and home previously read no frames at all.
+- `KEEP_MEDIA` (default true): keep the downloaded video, frames, and thumbnail as a local archive; set false to delete them after extraction and save disk.
+- Setup wizard: `python -m pipeline.setup` prompts for your brain provider and key, writes `.env`, and runs the doctor.
+- Worker retry-with-backoff and dead-letter (`WORKER_MAX_ATTEMPTS`): a transient Instagram or network blip requeues with exponential backoff instead of dropping a reel.
+- Offline saved-export backfill: `python -m pipeline.backfill <export.json> --run` ingests your Instagram `saved_collections.json` / `saved_posts.json` straight from the captions, auto-routed (a Collection-name keyword for free, otherwise the brain classifies once per collection); recipe/place/home get full extraction, everything else is indexed as a searchable `saved` item. Resumable (skips already-saved URLs), throttled (`BACKFILL_SLEEP`); thin or caption-less items are flagged in `work/needs_video.jsonl` for a later video pass. `--limit` runs a safe slice; a no-flag run previews counts and routing.
 - Dashboard: a `Saved` filter chip and icon for generically-indexed items.
+- Docs: a "Choose your host" matrix and a first-class personal-computer host guide (Windows/macOS/Linux), so any user finds their setup path in seconds.
+
+### Changed
+- Mode-aware doctor: ffmpeg is required only for `CAPTURE_MODE=full`; in auto and caption modes it is advisory.
+- `.env.example`: browser cookies are off by default (drop a `cookies.txt` instead), and transcription auto-detects the GPU. Defaults lead, overrides are documented inline.
 
 ### Fixed
 - The backfill parser now reads the current nested Instagram export format (a list of collections with `label_values` holding the name, captions, and URLs). The previous parser matched only the older dict shape and silently fell back to a URL regex, which lost every collection's routing.
+- Instagram cookie loading on Windows: a `cookies.txt` file is used in preference to the browser-cookie path, which fails with a DPAPI decrypt error.
 
 ## [0.3.0] - 2026-06-14
 
@@ -64,4 +79,5 @@ versions may still change behavior.
 - Community kit: AGPL-3.0 plus commercial dual license, CLA, governance ladder, security
   policy, issue and PR templates, and CI.
 
+[0.4.0]: https://github.com/naari21694/grand-log/releases/tag/v0.4.0
 [0.3.0]: https://github.com/naari21694/grand-log/releases/tag/v0.3.0
