@@ -51,11 +51,17 @@ def _workdir_ok() -> bool:
 
 def check() -> bool:
     print("Grand Log doctor\n")
-    required = [
-        _line("ffmpeg on PATH", bool(shutil.which(config.FFMPEG)), config.FFMPEG),
-        _brain_ok(),
-        _line("work/ writable", _workdir_ok(), str(config.WORKDIR)),
-    ]
+    # ffmpeg is mandatory only in full mode. auto/caption read the caption first and pull
+    # the video (needing ffmpeg) only when a caption is thin, so there it is advisory.
+    full_mode = config.CAPTURE_MODE == "full"
+    ffmpeg_label = "ffmpeg on PATH" if full_mode else f"ffmpeg on PATH (optional in {config.CAPTURE_MODE} mode)"
+    ffmpeg_detail = config.FFMPEG if full_mode else "needed only if a reel falls back to video; required for CAPTURE_MODE=full"
+    ffmpeg_line = _line(ffmpeg_label, bool(shutil.which(config.FFMPEG)), ffmpeg_detail)
+    required = [_brain_ok(), _line("work/ writable", _workdir_ok(), str(config.WORKDIR))]
+    if full_mode:
+        required.append(ffmpeg_line)
+
+    # Advisory: needed only for the bot and the cookbook destination.
 
     # Advisory: needed only for the bot and the cookbook destination.
     locked = bool(config.ALLOWED_CHAT_IDS) or config.ALLOW_ALL_CHATS
