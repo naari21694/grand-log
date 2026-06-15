@@ -20,14 +20,14 @@ flowchart LR
 1. Share a reel (the bot) or load an Instagram export (backfill).
 2. `process_one(url, bucket)` takes over.
 3. download, then transcribe, then optionally sample frames.
-4. the brain extracts a structured item (from the caption and transcript, plus the on-screen frames when a value is missing).
+4. the brain extracts a structured item (from the caption and transcript, plus a full-frame vision pass that reads all on-screen text for every crew bucket).
 5. the item lands in its destination: Mealie for recipes, a map file for places, a vault file for home.
 6. the store indexes it, so `/search`, `/digest`, and the dashboard can find it.
 
 ## Modules by layer
 
 **Entrypoints (the runnable things)**
-- `process.py` orchestrate one reel; dispatch by bucket
+- `process.py` orchestrate one reel; dispatch by bucket. `KEEP_MEDIA` (default true) keeps the downloaded media as a local archive; set false to delete it after extraction
 - `bot.py` the Telegram bot (Den Den Mushi): capture, cards, `/search`, `/digest`, `/dashboard`
 - `web.py` the tile dashboard server
 - `backfill.py` load an Instagram export into the queue
@@ -41,11 +41,11 @@ flowchart LR
 
 **Stages (shared capture)**
 - `download.py` yt-dlp, with a gallery-dl fallback
-- `transcribe.py` whisper (faster-whisper or whisper.cpp)
+- `transcribe.py` whisper: faster-whisper auto-detects an NVIDIA GPU and runs on CUDA, with a Groq cloud backend option and a CPU/whisper.cpp fallback (chosen by env)
 - `frames.py` ffmpeg scene-frames and a thumbnail
 
 **Extract (the brain)**
-- `brain.py` provider-agnostic LLM adapters (Gemini, OpenAI-compatible, Anthropic), text and vision, with a validate-and-repair loop
+- `brain.py` provider-agnostic LLM adapters (Gemini, OpenAI-compatible, Anthropic), text and vision, with a validate-and-repair loop. The full-frame vision pass reads all on-screen text for every crew bucket (recipe, place, home)
 - `geocode.py` free OpenStreetMap geocoding
 
 **Destinations (per-bucket sinks)**

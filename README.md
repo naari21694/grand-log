@@ -8,7 +8,7 @@ Share a reel to a Telegram bot. A small crew pulls out the value and files it wh
 
 ![license](https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square)
 ![status](https://img.shields.io/badge/status-alpha-yellow?style=flat-square)
-[![version](https://img.shields.io/badge/version-0.3.0-blue?style=flat-square)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.4.0-blue?style=flat-square)](CHANGELOG.md)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 [![CI](https://github.com/naari21694/grand-log/actions/workflows/ci.yml/badge.svg)](https://github.com/naari21694/grand-log/actions/workflows/ci.yml)
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
@@ -54,8 +54,14 @@ Crew names are an affectionate One Piece homage. The bucket keys underneath are 
 
 - **AI brains: any key you already have**, through three adapters. Gemini (free tier), any OpenAI-compatible API (OpenAI, OpenRouter, Groq, Together, DeepSeek, or local Ollama), and Anthropic. A validate-and-repair step keeps the output schema-valid even on a small free model.
 - **Three capture modes** (`CAPTURE_MODE`): `auto` reads the caption first and only downloads the video and runs Whisper when the caption is thin; `caption` never downloads; `full` always does.
+- **Full on-screen vision for every crew:** the vision pass reads all on-screen text (names, addresses, prices, dimensions, quantities, steps) for recipe, place, and home, not just recipe quantities.
+- **GPU transcription that just works:** faster-whisper auto-detects an NVIDIA GPU and runs on CUDA (`WHISPER_DEVICE=auto`), with a free Groq cloud option (`TRANSCRIBE_BACKEND=groq`) and a CPU fallback. Force the device with `cpu` or `cuda`.
 - **Destinations:** recipes to Mealie, or to a local cookbook file (`work/recipes.json` plus a CSV summary) when there is no Mealie; places to GeoJSON plus CSV for Google My Maps and a sheet; home items to CSV plus JSON for a sheet or Notion.
 - **Multilingual** transcription (auto-detected: English, Japanese, Hindi, and more).
+- **Guided setup:** `python -m pipeline.setup` prompts for your brain provider and key, writes `.env`, and runs the doctor.
+- **A blip never loses a reel:** the worker retries a transient Instagram or network failure with exponential backoff and dead-letters only after `WORKER_MAX_ATTEMPTS`.
+- **A local media archive:** `KEEP_MEDIA` (default on) keeps the downloaded video, frames, and thumbnail; set it false to delete them after extraction and save disk.
+- **`cookies.txt` that works on Windows:** drop a Netscape `cookies.txt` (default `work/cookies.txt`) and it is auto-detected, taking precedence over browser cookies, which sidesteps the Windows browser-cookie failure.
 - **Any OS** via Python or a Docker image you build, and **any phone** via the Telegram bot.
 - **Source:** Instagram reels and posts today. The downloader (yt-dlp) and the host allow-list already cover TikTok and YouTube, not yet tested end to end.
 

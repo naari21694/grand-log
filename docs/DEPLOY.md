@@ -79,9 +79,11 @@ cd reel-pipeline
 docker compose up -d
 ```
 
-Docker also sidesteps a Windows quirk where yt-dlp cannot read Chrome cookies, since the container is
-Linux. For most reels this does not matter, because caption-first mode reads the caption without
-downloading the video.
+On Windows, yt-dlp cannot read Chrome's cookies (a DPAPI limitation). The fix is to export a Netscape
+`cookies.txt` from a throwaway account and drop it at `work/cookies.txt`, which is auto-detected and
+works everywhere (see [CONFIGURATION.md](CONFIGURATION.md#instagram-cookies)). Running under Docker
+also sidesteps the quirk, since the container is Linux. For many reels it does not matter at all,
+because caption-first mode reads the caption without downloading the video.
 
 ### 3. Keep it running (always-on)
 The bot restarts itself after a crash (the Docker `restart` policy) and resumes its queue after a
@@ -96,9 +98,11 @@ reboot. To have it answer around the clock, stop the machine from sleeping, and 
   on boot (`systemctl enable docker`). For the native path, a small `systemd` service works.
 
 Caveats to accept: a home machine is offline during power or internet outages, and full-mode Whisper
-transcription is slow on a laptop. Both are eased by caption-first mode and by the queue resuming when
-the machine comes back. When you want always-on without relying on your own hardware, use the home
-server Docker Compose path below or a cloud host.
+transcription is slow on a CPU-only laptop. Transcription auto-detects an NVIDIA GPU and uses it when
+present; with no GPU, `TRANSCRIBE_BACKEND=groq` moves it to free cloud Whisper (see
+[CONFIGURATION.md](CONFIGURATION.md#transcription)). Both the outage and the speed caveat are eased by
+caption-first mode and by the queue resuming when the machine comes back. When you want always-on
+without relying on your own hardware, use the home server Docker Compose path below or a cloud host.
 
 ## Railway
 

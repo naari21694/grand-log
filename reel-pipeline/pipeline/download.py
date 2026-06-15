@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -74,7 +75,7 @@ def fetch(url: str) -> Media:
 
 
 def _gallery_dl(url: str, prev_err: Exception) -> Media:
-    cmd = ["gallery-dl", "-D", str(config.WORKDIR), "--write-metadata"]
+    cmd = [sys.executable, "-m", "gallery_dl", "-D", str(config.WORKDIR), "--write-metadata"]
     if config.YTDLP_COOKIES_FILE:
         cmd += ["--cookies", config.YTDLP_COOKIES_FILE]
     elif config.YTDLP_COOKIES_BROWSER:

@@ -81,6 +81,20 @@ cp .env.example .env              # Windows: copy .env.example .env
 
 The first time you run an extraction, the pipeline downloads the Whisper transcription model (about 1.5 GB). That happens once and is cached for every run after.
 
+**Transcription just works.** It auto-detects an NVIDIA GPU and runs on it (much faster), and falls back to CPU when there is none. No setting is required. On Windows with an NVIDIA GPU, if the GPU run cannot find the CUDA libraries, install them once into your virtualenv:
+
+```bash
+pip install nvidia-cublas-cu12 nvidia-cudnn-cu12
+```
+
+Override: to transcribe in the cloud off your own machine, set `TRANSCRIBE_BACKEND=groq` in `.env` for free, fast Whisper. That needs a `GROQ_API_KEY` from [console.groq.com](https://console.groq.com).
+
+**The easy way to create `.env`.** Instead of copying the template by hand, run the setup wizard. It prompts for your brain provider and key, writes `.env`, and runs the doctor at the end:
+
+```bash
+python -m pipeline.setup
+```
+
 ## 3. Configure the brain
 
 Open `reel-pipeline/.env` and set the provider plus its matching key. The minimal Gemini case is two lines:
@@ -121,13 +135,17 @@ python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
 
 This downloads the reel, transcribes it, runs the brain, and writes the full structured result to `work/last_recipe.json` instead of sending it anywhere. Open that file to see what the brain pulled out: measurements, a confidence flag, and more.
 
-**Instagram cookies note.** Instagram blocks most logged-out downloads behind a login wall. To get past it, point the downloader at a browser you are logged into with a throwaway Instagram account, never your main one. In `.env`:
+**Instagram cookies note.** Instagram blocks most logged-out downloads behind a login wall. To get past it, log into Instagram with a throwaway account, never your main one, and give the downloader its cookies.
+
+The easy path, which works on Windows: export a `cookies.txt` (Netscape format) for that throwaway account and drop it at `work/cookies.txt`. It is auto-detected, so no `.env` change is needed. To point at a different location, set `YTDLP_COOKIES_FILE` in `.env`.
+
+The browser-cookie path is an override and is broken on Windows (it fails with a DPAPI decrypt error), so prefer the `cookies.txt` file there. On Linux or macOS you can instead pull cookies straight from a logged-in browser profile:
 
 ```ini
 YTDLP_COOKIES_BROWSER=chrome
 ```
 
-Use whatever browser holds the throwaway login (`chrome`, `firefox`, and so on). Leaving it empty tries without cookies, which often fails.
+Use whatever browser holds the throwaway login (`chrome`, `firefox`, and so on). With neither set, the downloader tries without cookies, which often fails.
 
 ## 6. Run the bot (Den Den Mushi)
 
@@ -214,7 +232,7 @@ docker run --rm -v "$PWD/work:/app/work" grand-log "https://www.instagram.com/re
 
 **ffmpeg not found.** The doctor's `ffmpeg on PATH` check fails. Install the real binary (see Prerequisites), then open a new terminal so PATH is refreshed. The `pip install ffmpeg` package is not the same thing and will not work.
 
-**Instagram login wall.** Downloads fail or return nothing because Instagram blocks logged-out access. Set `YTDLP_COOKIES_BROWSER` to a browser logged into a throwaway Instagram account (see step 5). Do not use your main account.
+**Instagram login wall.** Downloads fail or return nothing because Instagram blocks logged-out access. Export a `cookies.txt` from a throwaway Instagram account and drop it at `work/cookies.txt`, which is auto-detected and is the path that works on Windows (see step 5). The browser-cookie override (`YTDLP_COOKIES_BROWSER`) fails on Windows with a DPAPI decrypt error, so use the file there. Do not use your main account.
 
 **Brain key errors.** If extraction fails with an auth or key error, recheck the provider and key in `.env`. For Gemini, confirm `BRAIN_PROVIDER=gemini` and that `GEMINI_API_KEY` is filled in. Run `python -m pipeline.doctor` to confirm the brain line is `[OK ]`.
 

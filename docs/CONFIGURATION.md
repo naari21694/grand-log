@@ -4,6 +4,17 @@ This is the complete settings reference for Grand Log. Every setting is read fro
 
 Grand Log is alpha. Pick the provider whose key you already have, point a few variables at it, and you have a working brain.
 
+## Instagram cookies
+
+Instagram's login wall blocks downloads, so a cookie from a throwaway account is needed to fetch a reel. The default path works on Windows: export a Netscape-format `cookies.txt` and drop it at `work/cookies.txt`. Grand Log auto-detects it, and a `cookies.txt` takes precedence over the browser-cookie path, which sidesteps the Windows DPAPI browser-cookie decrypt failure. Point `YTDLP_COOKIES_FILE` elsewhere only if your file lives outside `work/`.
+
+To pull cookies straight from a logged-in browser profile instead, override with `YTDLP_COOKIES_BROWSER` (for example `chrome`). Note this path is broken on Windows because of DPAPI, so prefer `cookies.txt` there.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| `YTDLP_COOKIES_FILE` | (empty) | Path to a Netscape `cookies.txt`. `work/cookies.txt` is auto-detected; set this only to point elsewhere. Takes precedence over `YTDLP_COOKIES_BROWSER`. |
+| `YTDLP_COOKIES_BROWSER` | (empty) | Browser profile to pull cookies from (for example `chrome`). Broken on Windows (DPAPI); use `cookies.txt` there. |
+
 ## Capture mode
 
 `CAPTURE_MODE` decides how much of a reel Grand Log reads.
@@ -14,6 +25,14 @@ Grand Log is alpha. Pick the provider whose key you already have, point a few va
 
 ```bash
 CAPTURE_MODE=auto
+```
+
+### Keep the downloaded media
+
+`KEEP_MEDIA` defaults to `true`, so the downloaded video, sampled frames, and thumbnail stay in your `WORKDIR` as a local archive after extraction. Set it `false` to delete them once extraction finishes and reclaim disk.
+
+```bash
+KEEP_MEDIA=true
 ```
 
 ## The brain
@@ -126,19 +145,40 @@ If a named provider has no key, the vision pass falls back to off rather than er
 
 ## Transcription
 
-Grand Log transcribes the reel's audio before the brain reads it. Two backends are available.
-
-| Setting | Default | Notes |
-| --- | --- | --- |
-| `TRANSCRIBE_BACKEND` | `faster_whisper` | `faster_whisper` is pip-only and cross-platform, the best choice on Windows and for development. `whisper_cpp` is a binary, best on an ARM box such as the Oracle free tier. |
-| `WHISPER_MODEL` | `large-v3-turbo` | The faster-whisper model to load. |
-| `WHISPER_CPP_BIN` | (empty) | Path to the `whisper.cpp` binary, used when `TRANSCRIBE_BACKEND=whisper_cpp`. |
-| `WHISPER_CPP_MODEL` | (empty) | Path to the `whisper.cpp` model file, used when `TRANSCRIBE_BACKEND=whisper_cpp`. |
+Grand Log transcribes the reel's audio before the brain reads it. The default just works: faster-whisper runs locally and auto-detects an NVIDIA GPU, falling back to CPU when there is none. You only touch these settings to change where or how transcription runs.
 
 ```bash
 TRANSCRIBE_BACKEND=faster_whisper
+WHISPER_DEVICE=auto
 WHISPER_MODEL=large-v3-turbo
 ```
+
+### Device and compute
+
+With `WHISPER_DEVICE=auto` (the default), faster-whisper detects an NVIDIA GPU and runs on CUDA, which is much faster than CPU. On Windows the cuDNN and cuBLAS libraries are loaded for you. Override the choice when you want to force one path:
+
+- `WHISPER_DEVICE=cuda` forces the GPU.
+- `WHISPER_DEVICE=cpu` forces CPU, useful when the GPU is busy or the CUDA libraries are missing.
+
+`WHISPER_COMPUTE` sets the precision. Leave it blank and Grand Log picks a sensible default per device: `int8_float16` on GPU, `int8` on CPU. Set it only to override that choice (for example `float16` or `float32`).
+
+### Backend
+
+`TRANSCRIBE_BACKEND` selects the engine. The default `faster_whisper` is pip-only and cross-platform, the best choice on Windows and for development. Two overrides:
+
+- `groq`: free, fast cloud Whisper that runs off your local machine. Set `TRANSCRIBE_BACKEND=groq` and a `GROQ_API_KEY` from [console.groq.com](https://console.groq.com). `GROQ_WHISPER_MODEL` defaults to `whisper-large-v3-turbo`.
+- `whisper_cpp`: a binary, best on an ARM box such as a Raspberry Pi or the Oracle free tier. Point `WHISPER_CPP_BIN` at the binary and `WHISPER_CPP_MODEL` at the model file.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| `TRANSCRIBE_BACKEND` | `faster_whisper` | `faster_whisper` (local), `groq` (free cloud), or `whisper_cpp` (ARM). |
+| `WHISPER_DEVICE` | `auto` | `auto` detects an NVIDIA GPU; force with `cpu` or `cuda`. |
+| `WHISPER_COMPUTE` | (empty) | Precision; blank means `int8_float16` on GPU, `int8` on CPU. |
+| `WHISPER_MODEL` | `large-v3-turbo` | The faster-whisper model to load. |
+| `GROQ_API_KEY` | (empty) | Key for the `groq` backend, from [console.groq.com](https://console.groq.com). |
+| `GROQ_WHISPER_MODEL` | `whisper-large-v3-turbo` | Groq Whisper model, used when `TRANSCRIBE_BACKEND=groq`. |
+| `WHISPER_CPP_BIN` | (empty) | Path to the `whisper.cpp` binary, used when `TRANSCRIBE_BACKEND=whisper_cpp`. |
+| `WHISPER_CPP_MODEL` | (empty) | Path to the `whisper.cpp` model file, used when `TRANSCRIBE_BACKEND=whisper_cpp`. |
 
 ## Destination (Mealie)
 
@@ -196,6 +236,18 @@ The file maps each bucket to its keyword list. The shipped example:
 
 Any bucket you list replaces that bucket's default keyword list. A bucket you leave out keeps its defaults.
 
+## Worker
+
+The worker drains the SQLite job queue. The default handles a flaky network for you: a transient Instagram or network blip requeues the reel with exponential backoff instead of dropping it, and a job is dead-lettered only after `WORKER_MAX_ATTEMPTS` tries.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| `WORKER_MAX_ATTEMPTS` | `3` | Tries before a job is dead-lettered. Raise it for a flakier connection; lower it to fail fast. |
+
+```bash
+WORKER_MAX_ATTEMPTS=3
+```
+
 ## Security
 
 Grand Log ships locked down. These settings are how it stays that way. See [SECURITY.md](../SECURITY.md) for the full hardening checklist.
@@ -240,10 +292,16 @@ Every variable, its meaning, and its default. Defaults are taken from `pipeline/
 | --- | --- | --- |
 | `WORKDIR` | Working directory for downloads, the store, the queue, and `routes.json`. | `./work` |
 | `FFMPEG` | ffmpeg command or path. | `ffmpeg` |
-| `YTDLP_COOKIES_BROWSER` | Browser to pull Instagram login cookies from (for example `chrome`). Empty tries without cookies, which often fails. Use a throwaway Instagram account. | (empty) |
+| `YTDLP_COOKIES_FILE` | Path to a Netscape `cookies.txt`. `work/cookies.txt` is auto-detected; takes precedence over the browser-cookie path. Use a throwaway Instagram account. | (empty) |
+| `YTDLP_COOKIES_BROWSER` | Browser to pull Instagram login cookies from (for example `chrome`). Broken on Windows (DPAPI); use `cookies.txt` there. | (empty) |
 | `CAPTURE_MODE` | How much of the reel to read: `auto` (caption first, video only if thin), `caption` (never download), or `full` (always). | `auto` |
-| `TRANSCRIBE_BACKEND` | Transcription backend: `faster_whisper` or `whisper_cpp`. | `faster_whisper` |
+| `KEEP_MEDIA` | Keep the downloaded video, frames, and thumbnail as a local archive; `false` deletes them after extraction. | `true` |
+| `TRANSCRIBE_BACKEND` | Transcription backend: `faster_whisper` (local), `groq` (free cloud), or `whisper_cpp` (ARM). | `faster_whisper` |
+| `WHISPER_DEVICE` | faster-whisper device: `auto` detects an NVIDIA GPU; force with `cpu` or `cuda`. | `auto` |
+| `WHISPER_COMPUTE` | faster-whisper precision; blank means `int8_float16` on GPU, `int8` on CPU. | (empty) |
 | `WHISPER_MODEL` | faster-whisper model to load. | `large-v3-turbo` |
+| `GROQ_API_KEY` | Key for the `groq` backend, from console.groq.com. | (empty) |
+| `GROQ_WHISPER_MODEL` | Groq Whisper model (groq backend). | `whisper-large-v3-turbo` |
 | `WHISPER_CPP_BIN` | Path to the `whisper.cpp` binary (whisper_cpp backend). | (empty) |
 | `WHISPER_CPP_MODEL` | Path to the `whisper.cpp` model file (whisper_cpp backend). | (empty) |
 | `BRAIN_PROVIDER` | Text extraction provider: `gemini`, `openai`, or `anthropic`. | `gemini` |
@@ -258,6 +316,7 @@ Every variable, its meaning, and its default. Defaults are taken from `pipeline/
 | `MEALIE_URL` | Mealie base URL; trailing slash trimmed. Empty forces dry-run. | (empty) |
 | `MEALIE_TOKEN` | Mealie API token. | (empty) |
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token from @BotFather; needed to run the bot. | (empty) |
+| `WORKER_MAX_ATTEMPTS` | Worker retries before a job is dead-lettered, with exponential backoff. | `3` |
 | `ALLOWED_CHAT_IDS` | Telegram chat ids allowed to drive the bot (comma- or space-separated). | (empty) |
 | `ALLOW_ALL_CHATS` | Open the bot to any chat. | `false` |
 | `ALLOWED_HOSTS` | Hosts a reel may be downloaded from (comma- or space-separated). Empty uses the default list. | (empty) |
