@@ -46,6 +46,8 @@ YTDLP_COOKIES_FILE = _s("YTDLP_COOKIES_FILE") or (
 # --- transcription ---
 TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp | groq
 WHISPER_MODEL = _s("WHISPER_MODEL", "large-v3-turbo")
+WHISPER_DEVICE = _s("WHISPER_DEVICE", "auto")   # auto: cuda if an NVIDIA GPU is present, else cpu
+WHISPER_COMPUTE = _s("WHISPER_COMPUTE")         # blank: int8_float16 on cuda, int8 on cpu
 WHISPER_CPP_BIN = _s("WHISPER_CPP_BIN")
 WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
 # Groq: free, fast cloud Whisper (OpenAI-compatible). Set TRANSCRIBE_BACKEND=groq + GROQ_API_KEY

@@ -57,11 +57,46 @@ def _groq(audio: str) -> str:
     return (resp.json().get("text") or "").strip()
 
 
+def _device() -> str:
+    if config.WHISPER_DEVICE != "auto":
+        return config.WHISPER_DEVICE
+    try:
+        import ctranslate2
+        return "cuda" if ctranslate2.get_cuda_device_count() > 0 else "cpu"
+    except Exception:
+        return "cpu"
+
+
+def _add_cuda_dlls() -> None:
+    """Windows: put the pip-installed CUDA libs (cuBLAS, cuDNN) on the DLL search path."""
+    import os
+    import sys
+    if sys.platform != "win32":
+        return
+    try:
+        import nvidia
+    except Exception:
+        return
+    for base in getattr(nvidia, "__path__", []):  # nvidia is a namespace package (__file__ is None)
+        for sub in ("cublas/bin", "cudnn/bin"):
+            directory = Path(base) / sub
+            if directory.is_dir():
+                try:
+                    os.add_dll_directory(str(directory))
+                except OSError:
+                    pass
+
+
 def _faster_whisper(wav: str) -> str:
     global _model
     from faster_whisper import WhisperModel
     if _model is None:
-        _model = WhisperModel(config.WHISPER_MODEL, device="cpu", compute_type="int8")
+        device = _device()
+        if device == "cuda":
+            _add_cuda_dlls()
+        compute = config.WHISPER_COMPUTE or ("int8_float16" if device == "cuda" else "int8")
+        _model = WhisperModel(config.WHISPER_MODEL, device=device, compute_type=compute)
+        print(f"   whisper on {device} ({compute})")
     segments, _ = _model.transcribe(wav, language=None, vad_filter=True)
     return " ".join(s.text.strip() for s in segments).strip()
 
