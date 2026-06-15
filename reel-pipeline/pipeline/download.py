@@ -27,7 +27,9 @@ def _ydl_opts() -> dict:
         "merge_output_format": "mp4",
         "quiet": True, "no_warnings": True, "noprogress": True,
     }
-    if config.YTDLP_COOKIES_BROWSER:
+    if config.YTDLP_COOKIES_FILE:  # a cookies.txt file wins; it works on Windows (no DPAPI)
+        opts["cookiefile"] = config.YTDLP_COOKIES_FILE
+    elif config.YTDLP_COOKIES_BROWSER:
         opts["cookiesfrombrowser"] = (config.YTDLP_COOKIES_BROWSER,)
     return opts
 
@@ -73,7 +75,9 @@ def fetch(url: str) -> Media:
 
 def _gallery_dl(url: str, prev_err: Exception) -> Media:
     cmd = ["gallery-dl", "-D", str(config.WORKDIR), "--write-metadata"]
-    if config.YTDLP_COOKIES_BROWSER:
+    if config.YTDLP_COOKIES_FILE:
+        cmd += ["--cookies", config.YTDLP_COOKIES_FILE]
+    elif config.YTDLP_COOKIES_BROWSER:
         cmd += ["--cookies-from-browser", config.YTDLP_COOKIES_BROWSER]
     cmd.append(url)
     r = subprocess.run(cmd, capture_output=True, text=True)

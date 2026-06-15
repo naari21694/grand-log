@@ -38,6 +38,10 @@ def _id_set(name: str) -> set[int]:
 WORKDIR = Path(_s("WORKDIR", "./work")).resolve()
 FFMPEG = _s("FFMPEG", "ffmpeg")
 YTDLP_COOKIES_BROWSER = _s("YTDLP_COOKIES_BROWSER")  # e.g. "chrome"; empty = no cookies
+# A Netscape cookies.txt from a throwaway account; sidesteps the Windows DPAPI browser-cookie
+# limitation. Defaults to work/cookies.txt if present, so dropping the file in just works.
+YTDLP_COOKIES_FILE = _s("YTDLP_COOKIES_FILE") or (
+    str(WORKDIR / "cookies.txt") if (WORKDIR / "cookies.txt").exists() else "")
 
 # --- transcription ---
 TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp
