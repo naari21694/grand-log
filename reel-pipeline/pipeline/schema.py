@@ -94,6 +94,17 @@ Schema:
 {schema_hint}
 """
 
+VISION_FULL_PROMPT = """You are reading EVERYTHING from the frames of a saved Instagram {bucket} reel: all on-screen text (overlay cards, burned-in captions, titles, prices, names, addresses, quantities, steps) and what is visibly shown.
+
+Here is the record extracted from the caption and audio so far:
+{record_json}
+
+Complete and correct this record from what you can actually read or see in the frames: fill blank / 0 / unknown fields, fix wrong ones, and add detail the caption missed (on-screen quantities, the exact dish / place / product name, address, price, dimensions, steps). Do NOT invent anything that is not visible. Keep every good existing field. Return the COMPLETE record as JSON for the same schema.
+
+Schema:
+{schema_hint}
+"""
+
 # ----- Log Pose (places) -----
 PLACE_SCHEMA = {
     "type": "object",

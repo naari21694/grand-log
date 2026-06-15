@@ -50,6 +50,11 @@ WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
 # caption: never download the video; full: always download and transcribe
 CAPTURE_MODE = _s("CAPTURE_MODE", "auto")  # auto | caption | full
 
+# --- media archive ---
+# Keep the downloaded video, sampled frames, and thumbnail after extraction (your local archive).
+# Set false to delete them once extraction is done and save disk.
+KEEP_MEDIA = _bool("KEEP_MEDIA", True)
+
 # --- backfill ---
 BACKFILL_SLEEP = float(_s("BACKFILL_SLEEP", "0") or "0")  # seconds to pause after each AI call
 

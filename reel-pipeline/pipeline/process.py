@@ -15,8 +15,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import urllib.parse
+from pathlib import Path
 
 from . import (
     brain,
@@ -84,7 +86,23 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False, mode: s
     record["_card"] = card
     store.save(bucket=bucket, title=card["title"], summary=card["summary"], link=card["link"],
                thumb=card["thumb"], text=json.dumps(record, ensure_ascii=False), source_url=url)
+    if not config.KEEP_MEDIA:
+        _cleanup_media(media)
     return record
+
+
+def _cleanup_media(media) -> None:
+    """Delete the downloaded video, its sampled frames, and thumbnail (KEEP_MEDIA=false: save disk)."""
+    video = getattr(media, "video", "") or ""
+    if not video:
+        return
+    stem = Path(video).stem
+    for path in (Path(video), Path(config.WORKDIR) / f"{stem}_thumb.jpg"):
+        try:
+            path.unlink()
+        except OSError:
+            pass
+    shutil.rmtree(Path(config.WORKDIR) / f"{stem}_frames", ignore_errors=True)
 
 
 def _gather(url: str, bucket: str, mode: str, extract) -> tuple:
@@ -143,10 +161,15 @@ def _card(record: dict, bucket: str) -> dict:
 
 
 def _finish_recipe(url: str, media, recipe: dict, dry_run: bool) -> dict:
-    missing = recipe.get("missing_quantities") or []
-    if missing and media.video and brain.vision_available():
-        print(f"   vision: reading on-screen quantities for {missing}")
-        recipe = brain.extract_vision(frames.sample(media.video), recipe, missing)
+    if media.video and brain.vision_available():
+        fr = frames.sample(media.video)
+        missing = recipe.get("missing_quantities") or []
+        if missing:
+            print(f"   vision: reading on-screen quantities for {missing}")
+            recipe = brain.extract_vision(fr, recipe, missing)
+        else:
+            print("   vision: reading all on-screen text from frames")
+            recipe = brain.extract_vision_full(fr, recipe, "recipe")
     recipe["_source_url"] = url
     recipe["_thumb"] = (frames.grab_one(media.video) or "") if media.video else ""
 
@@ -168,6 +191,8 @@ def _finish_recipe(url: str, media, recipe: dict, dry_run: bool) -> dict:
 
 def _finish_place(url: str, media, place: dict) -> dict:
     place["_source_url"] = url
+    if media.video and brain.vision_available():
+        place = brain.extract_vision_full(frames.sample(media.video), place, "place")
     if not place.get("lat") and place.get("name"):
         query = " ".join(p for p in (place.get("name"), place.get("city"), place.get("country")) if p)
         coords = geocode.lookup(query)
@@ -186,6 +211,8 @@ def _finish_place(url: str, media, place: dict) -> dict:
 
 def _finish_home(url: str, media, item: dict) -> dict:
     item["_source_url"] = url
+    if media.video and brain.vision_available():
+        item = brain.extract_vision_full(frames.sample(media.video), item, "home")
     home.append(item)
     item["_thumb"] = (frames.grab_one(media.video) or "") if media.video else ""
     item["_link"] = item.get("link", "")

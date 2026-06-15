@@ -216,6 +216,34 @@ def extract_vision(frames: list[str], recipe: dict, missing: list[str]) -> dict:
         return recipe
 
 
+_VISION_HINT = {"recipe": schema.SCHEMA_HINT, "place": schema.PLACE_SCHEMA_HINT,
+                "home": schema.HOME_SCHEMA_HINT}
+
+
+def extract_vision_full(frames: list[str], record: dict, bucket: str) -> dict:
+    """Read ALL on-screen text/detail from the frames and merge it into the record, any crew bucket.
+
+    Broader than extract_vision (which only fills missing recipe quantities): captures on-screen
+    steps, names, addresses, prices, dimensions, anything the caption missed. Best-effort: a failed
+    or keyless vision pass returns the text-only record unchanged.
+    """
+    provider = _vision_provider()
+    if provider == "none" or not frames:
+        return record
+    instruction = schema.VISION_FULL_PROMPT.format(
+        bucket=bucket, record_json=json.dumps(record, ensure_ascii=False),
+        schema_hint=_VISION_HINT.get(bucket, schema.SCHEMA_HINT))
+    try:
+        if provider == "gemini":
+            return {**record, **_gemini_vision(instruction, frames)}
+        if provider == "openai":
+            return {**record, **_openai_vision(instruction, frames)}
+        return {**record, **_anthropic_vision(instruction, frames)}
+    except Exception as exc:
+        print(f"   ⚠ full vision pass failed ({exc}); keeping text-only record")
+        return record
+
+
 def _read(path: str) -> bytes:
     with open(path, "rb") as handle:
         return handle.read()
