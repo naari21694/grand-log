@@ -44,10 +44,14 @@ YTDLP_COOKIES_FILE = _s("YTDLP_COOKIES_FILE") or (
     str(WORKDIR / "cookies.txt") if (WORKDIR / "cookies.txt").exists() else "")
 
 # --- transcription ---
-TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp
+TRANSCRIBE_BACKEND = _s("TRANSCRIBE_BACKEND", "faster_whisper")  # faster_whisper | whisper_cpp | groq
 WHISPER_MODEL = _s("WHISPER_MODEL", "large-v3-turbo")
 WHISPER_CPP_BIN = _s("WHISPER_CPP_BIN")
 WHISPER_CPP_MODEL = _s("WHISPER_CPP_MODEL")
+# Groq: free, fast cloud Whisper (OpenAI-compatible). Set TRANSCRIBE_BACKEND=groq + GROQ_API_KEY
+# (free at console.groq.com) to move transcription off the local CPU.
+GROQ_API_KEY = _s("GROQ_API_KEY")
+GROQ_WHISPER_MODEL = _s("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")
 
 # --- capture mode ---
 # auto: read the caption first, download the video and transcribe only if the caption is thin

@@ -21,3 +21,9 @@ def test_vision_hint_covers_every_crew_bucket():
 
 def test_keep_media_defaults_to_true():
     assert config.KEEP_MEDIA is True
+
+
+def test_groq_whisper_backend_is_wired():
+    from pipeline import transcribe
+    assert hasattr(transcribe, "_groq")
+    assert config.GROQ_WHISPER_MODEL  # default model id is set

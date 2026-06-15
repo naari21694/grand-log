@@ -30,12 +30,31 @@ def _to_wav(video: str) -> str:
 def run(video: str) -> str:
     try:
         wav = _to_wav(video)
+        if config.TRANSCRIBE_BACKEND == "groq":
+            return _groq(wav)
         if config.TRANSCRIBE_BACKEND == "whisper_cpp":
             return _whisper_cpp(wav)
         return _faster_whisper(wav)
     except Exception as e:
         print(f"   ⚠ transcription skipped ({e}); using caption only")
         return ""
+
+
+def _groq(audio: str) -> str:
+    """Free, fast cloud Whisper via Groq's OpenAI-compatible transcriptions endpoint."""
+    import requests
+    if not config.GROQ_API_KEY:
+        raise RuntimeError("GROQ_API_KEY is not set. Get a free key at console.groq.com.")
+    with open(audio, "rb") as handle:
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {config.GROQ_API_KEY}"},
+            files={"file": (Path(audio).name, handle, "audio/wav")},
+            data={"model": config.GROQ_WHISPER_MODEL, "response_format": "json"},
+            timeout=120,
+        )
+    resp.raise_for_status()
+    return (resp.json().get("text") or "").strip()
 
 
 def _faster_whisper(wav: str) -> str:
