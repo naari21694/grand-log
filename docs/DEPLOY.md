@@ -29,6 +29,77 @@ You need three things ready before you pick a platform.
 
 The full "after deploy" checklist is at the bottom of this page.
 
+## Choose your host
+
+Grand Log runs the same everywhere: one image (or one Python install) plus a `.env`. The bot
+long-polls Telegram, so no host needs an open inbound port, on a home machine or in the cloud.
+Pick what fits you.
+
+| Host | Best for | Always on | Cost | Where |
+|------|----------|-----------|------|-------|
+| Your own computer | personal use, trying it out | only while the machine is on | $0 | next section |
+| Home server, mini PC, or NAS | always-on at home, any user | yes | one-time hardware | Docker Compose, below |
+| Raspberry Pi | low-power always-on at home | yes | about $70 once | Docker Compose, below |
+| Oracle Cloud Always-Free ARM | a free cloud box, no hardware | yes | $0 | Docker Compose, below |
+| Railway / Render / Fly | fastest cloud, click to deploy | yes | free tier or a few dollars | their sections |
+
+If you just want to see it work, start on your own computer. For a setup that answers around the
+clock, use an always-on machine at home or a cloud host. Every option uses the same two keys and the
+same claim flow.
+
+## Your own computer (a personal always-on host)
+
+Running Grand Log on your own machine is a first-class option, not only a test. Because the bot
+reaches Telegram outbound only, it works from behind your home router with no port forwarding, and
+you can still share reels to it from your phone anywhere. The one thing to know: it answers only
+while the machine is on. For round-the-clock use, keep the machine awake (below) or move to an
+always-on box later. Nothing else changes, the same `.env` and the same bot.
+
+### 1. Install and configure
+Follow [INSTALL.md](INSTALL.md) to get the code and dependencies, then set up your `.env`. The fast
+way is the wizard, which asks for your keys and writes `.env` for you:
+
+```bash
+cd reel-pipeline
+python -m pipeline.setup
+```
+
+It prompts for your brain provider and key (Gemini is the free default) and an optional Telegram bot
+token, then runs the doctor. You can also copy `.env.example` to `.env` and edit it by hand.
+
+### 2. Run the bot
+```bash
+python -m pipeline.bot
+```
+
+Or, for an isolated, self-restarting setup that matches the cloud hosts, use Docker Desktop:
+
+```bash
+cd reel-pipeline
+docker compose up -d
+```
+
+Docker also sidesteps a Windows quirk where yt-dlp cannot read Chrome cookies, since the container is
+Linux. For most reels this does not matter, because caption-first mode reads the caption without
+downloading the video.
+
+### 3. Keep it running (always-on)
+The bot restarts itself after a crash (the Docker `restart` policy) and resumes its queue after a
+reboot. To have it answer around the clock, stop the machine from sleeping, and start it on login:
+
+- **Windows:** Settings, then System, then Power, set sleep to Never on power. To start on boot, either
+  enable Docker Desktop's "Start when you log in" (Docker path), or add `python -m pipeline.bot` as a
+  Task Scheduler task at logon (native path).
+- **macOS:** run under `caffeinate -s`, or add a `launchd` agent. Docker Desktop has a start-on-login
+  option too.
+- **Linux:** use the Docker Compose path with `restart: unless-stopped` (already set) and enable Docker
+  on boot (`systemctl enable docker`). For the native path, a small `systemd` service works.
+
+Caveats to accept: a home machine is offline during power or internet outages, and full-mode Whisper
+transcription is slow on a laptop. Both are eased by caption-first mode and by the queue resuming when
+the machine comes back. When you want always-on without relying on your own hardware, use the home
+server Docker Compose path below or a cloud host.
+
 ## Railway
 
 `railway.json` lives inside `reel-pipeline/`, not at the repo root. So the first thing to set in the Railway dashboard is the service Root Directory.

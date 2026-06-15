@@ -6,7 +6,9 @@ There are three ways to run it:
 
 1. **One-click cloud.** Deploy the bot to a host and let it run. See [DEPLOY.md](DEPLOY.md).
 2. **Docker.** One container for the bot, good on any OS or a small always-on box. Covered below.
-3. **Local.** A Python virtualenv on your own machine, best for trying it out and for one-off extractions. Covered below.
+3. **Local.** Run it on your own computer with a Python virtualenv or Docker Desktop. Good for trying it out, and a valid always-on personal host in its own right (see [Your own computer](DEPLOY.md#your-own-computer-a-personal-always-on-host)). Covered below.
+
+For the full menu of hosts (your own computer, a home server or Pi, Oracle, Railway, Render, Fly) and how to keep each one running, see [Choose your host](DEPLOY.md#choose-your-host).
 
 Every setting lives in one `.env` file. This guide shows the minimal path; for the full list of options and the complete brain provider matrix, see [CONFIGURATION.md](CONFIGURATION.md).
 
