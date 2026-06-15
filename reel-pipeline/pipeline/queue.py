@@ -19,7 +19,7 @@ def _conn() -> sqlite3.Connection:
 
 
 def init_db() -> None:
-    """Create the table and reset any job left 'running' by a crash."""
+    """Create the table, migrate older DBs, and reset any job left 'running' by a crash."""
     with _conn() as conn:
         conn.execute(
             """CREATE TABLE IF NOT EXISTS jobs (
@@ -30,9 +30,17 @@ def init_db() -> None:
                 status     TEXT    NOT NULL DEFAULT 'pending',
                 result     TEXT,
                 error      TEXT,
+                attempts   INTEGER NOT NULL DEFAULT 0,
+                next_at    TEXT,
                 created_at TEXT    NOT NULL DEFAULT (datetime('now'))
             )"""
         )
+        # Backward-compatible migration for queues created before retry support.
+        for column in ("attempts INTEGER NOT NULL DEFAULT 0", "next_at TEXT"):
+            try:
+                conn.execute(f"ALTER TABLE jobs ADD COLUMN {column}")
+            except sqlite3.OperationalError:
+                pass  # column already present
         conn.execute("UPDATE jobs SET status='pending' WHERE status='running'")
 
 
@@ -48,7 +56,8 @@ def claim_next() -> dict | None:
     """Return the oldest pending job and mark it running, or None if the queue is empty."""
     with _conn() as conn:
         row = conn.execute(
-            "SELECT * FROM jobs WHERE status='pending' ORDER BY id LIMIT 1"
+            "SELECT * FROM jobs WHERE status='pending' "
+            "AND (next_at IS NULL OR next_at <= datetime('now')) ORDER BY id LIMIT 1"
         ).fetchone()
         if row is None:
             return None
@@ -64,3 +73,12 @@ def mark_done(job_id: int, result: str) -> None:
 def mark_failed(job_id: int, error: str) -> None:
     with _conn() as conn:
         conn.execute("UPDATE jobs SET status='failed', error=? WHERE id=?", (error[:1000], job_id))
+
+
+def mark_retry(job_id: int, error: str, attempts: int, delay_seconds: int) -> None:
+    """Requeue a job for a later attempt: back to pending, claimable only after a backoff delay."""
+    with _conn() as conn:
+        conn.execute(
+            "UPDATE jobs SET status='pending', attempts=?, error=?, next_at=datetime('now', ?) WHERE id=?",
+            (attempts, error[:1000], f"+{int(delay_seconds)} seconds", job_id),
+        )

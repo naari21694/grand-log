@@ -161,10 +161,15 @@ async def _worker(app: Application) -> None:
             if job["chat_id"]:  # backfill jobs carry chat_id 0, no one to reply to
                 await _send_card(app, job["chat_id"], job["bucket"], card)
         except Exception as exc:  # keep the worker alive no matter what one job does
+            attempts = job.get("attempts", 0) + 1
+            if attempts < config.WORKER_MAX_ATTEMPTS:
+                # a transient blip: requeue with exponential backoff (5s, 10s, ...), no user noise
+                queue.mark_retry(job["id"], str(exc), attempts, 5 * 2 ** (attempts - 1))
+                continue
             queue.mark_failed(job["id"], str(exc))
             if job["chat_id"]:
                 try:
-                    await app.bot.send_message(job["chat_id"], f"That one failed: {exc}")
+                    await app.bot.send_message(job["chat_id"], f"That one failed after {attempts} tries: {exc}")
                 except Exception:
                     pass
 

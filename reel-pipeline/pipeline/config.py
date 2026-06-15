@@ -77,6 +77,11 @@ MEALIE_TOKEN = _s("MEALIE_TOKEN")
 # --- Den Den Mushi (Telegram bot) ---
 TELEGRAM_BOT_TOKEN = _s("TELEGRAM_BOT_TOKEN")
 
+# --- worker ---
+# A transient blip (network, Instagram rate limit) requeues with exponential backoff
+# instead of dropping the reel. After this many tries a job is dead-lettered (status=failed).
+WORKER_MAX_ATTEMPTS = int(_s("WORKER_MAX_ATTEMPTS", "3"))
+
 # --- security ---
 # Lock the bot to its owner. With no ids set and ALLOW_ALL_CHATS off, the bot replies with
 # your chat id and refuses to process until you add it. Never run a public bot unlocked.
