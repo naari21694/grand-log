@@ -7,6 +7,12 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+### Security
+- The brain no longer puts the API key in a request URL. The Gemini call passed the key as a `?key=` query parameter, so a request error (a 503 was observed in testing) leaked the full key into the error message and logs. The key now travels in the `x-goog-api-key` header, so it can never reach a URL.
+
+### Fixed
+- Transient brain-provider errors (5xx, 429, network blips) now retry with a short backoff instead of crashing the reel. Applies to the Gemini and OpenAI text and vision calls.
+
 ## [0.4.0] - 2026-06-15
 
 ### Added
