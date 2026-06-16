@@ -7,10 +7,14 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-06-16
+
 ### Security
 - The brain no longer puts the API key in a request URL. The Gemini call passed the key as a `?key=` query parameter, so a request error (a 503 was observed in testing) leaked the full key into the error message and logs. The key now travels in the `x-goog-api-key` header, so it can never reach a URL.
 - The dashboard token is compared in constant time (`hmac.compare_digest`), and the dashboard refuses to start if it is bound to a non-loopback address without a token set.
 - Release workflow actions are pinned to commit SHAs, closing a supply-chain path into the published image.
+- OpenSSF Scorecard runs only when the repository is public (its checkout fails on a private repo), matching the CodeQL gate, so CI stays clean while private.
+- A pre-commit hook blocks committing personal-data or secret files (`work/`, `.env`, cookies, the local items index), on top of the existing private-key check.
 
 ### Fixed
 - Transient brain-provider errors (5xx, 429, network blips) now retry with a short backoff instead of crashing the reel. Applies to the Gemini and OpenAI text and vision calls.
@@ -20,6 +24,8 @@ versions may still change behavior.
 ### Changed
 - Added a troubleshooting guide (`docs/TROUBLESHOOTING.md`) and tightened documentation consistency: one quickstart shared by the README and INSTALL, `cookies.txt` as the recommended Instagram method, and full-frame vision described for every crew.
 - The test suite grew to 109, adding coverage for the brain HTTP retry and header auth, Mealie writes, the download host allow-list, and the dashboard token gate.
+- Backfill rate-limit guidance added consistently to `.env.example`, the README, INSTALL, and CONFIGURATION: the Gemini free tier is too small for a full backlog, so use Groq or a local Ollama for the backfill and keep Gemini for live shares.
+- IDEAS.md reconciled with shipped work and given a public-launch and community section.
 
 ## [0.4.0] - 2026-06-15
 
@@ -93,6 +99,6 @@ versions may still change behavior.
 - Community kit: AGPL-3.0 plus commercial dual license, CLA, governance ladder, security
   policy, issue and PR templates, and CI.
 
-[Unreleased]: https://github.com/naari21694/grand-log/compare/v0.4.0...HEAD
-[0.4.0]: https://github.com/naari21694/grand-log/releases/tag/v0.4.0
+[Unreleased]: https://github.com/naari21694/grand-log/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/naari21694/grand-log/releases/tag/v0.4.1
 [0.3.0]: https://github.com/naari21694/grand-log/releases/tag/v0.3.0

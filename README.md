@@ -8,7 +8,7 @@ Share a reel to a Telegram bot. A small crew pulls out the value and files it wh
 
 ![license](https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square)
 ![status](https://img.shields.io/badge/status-alpha-yellow?style=flat-square)
-[![version](https://img.shields.io/badge/version-0.4.0-blue?style=flat-square)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.4.1-blue?style=flat-square)](CHANGELOG.md)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 [![CI](https://github.com/naari21694/grand-log/actions/workflows/ci.yml/badge.svg)](https://github.com/naari21694/grand-log/actions/workflows/ci.yml)
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
