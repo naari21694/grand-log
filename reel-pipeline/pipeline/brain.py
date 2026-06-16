@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import base64
 import json
+import time
 
 import requests
 
@@ -113,17 +114,40 @@ def _ensure_valid(record: dict, prompt: str, json_schema: dict, schema_hint: str
 
 
 # ---------------- providers (text) ----------------
+_RETRY_STATUS = {429, 500, 502, 503, 504}
+
+
+def _post_json(url: str, body: dict, headers: dict | None = None,
+               timeout: int = 300, attempts: int = 3) -> dict:
+    """POST returning JSON, with a short backoff on transient errors (5xx / 429 / network blip).
+
+    Auth always travels in `headers`, never the URL, so a raised error can never leak a key.
+    """
+    last: Exception | None = None
+    for i in range(attempts):
+        try:
+            resp = requests.post(url, json=body, headers=headers or {}, timeout=timeout)
+            if resp.status_code in _RETRY_STATUS:
+                last = requests.HTTPError(f"{resp.status_code} {resp.reason} from the brain API")
+            else:
+                resp.raise_for_status()
+                return resp.json()
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last = exc
+        if i < attempts - 1:
+            time.sleep(2 * (i + 1))
+    raise last
+
+
 def _gemini(parts: list) -> dict:
     if not config.GEMINI_API_KEY:
         raise RuntimeError(
             "GEMINI_API_KEY is not set. Get a free key at aistudio.google.com and put it in .env.")
     url = (f"https://generativelanguage.googleapis.com/v1beta/models/"
-           f"{config.GEMINI_MODEL}:generateContent?key={config.GEMINI_API_KEY}")
+           f"{config.GEMINI_MODEL}:generateContent")  # key goes in a header, never the URL
     body = {"contents": [{"parts": parts}],
             "generationConfig": {"response_mime_type": "application/json"}}
-    resp = requests.post(url, json=body, timeout=300)
-    resp.raise_for_status()
-    data = resp.json()
+    data = _post_json(url, body, {"x-goog-api-key": config.GEMINI_API_KEY})
     try:
         txt = data["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError):
@@ -145,10 +169,8 @@ def _openai_json(prompt: str, schema_hint: str) -> dict:
                       "content": f"{prompt}\n\nReturn ONLY JSON for this schema:\n{schema_hint}"}],
         "response_format": {"type": "json_object"},
     }
-    resp = requests.post(f"{config.OPENAI_BASE_URL}/chat/completions",
-                         json=body, headers=headers, timeout=300)
-    resp.raise_for_status()
-    return json.loads(resp.json()["choices"][0]["message"]["content"])
+    data = _post_json(f"{config.OPENAI_BASE_URL}/chat/completions", body, headers)
+    return json.loads(data["choices"][0]["message"]["content"])
 
 
 def _anthropic_json(prompt: str, json_schema: dict) -> dict:
@@ -265,10 +287,8 @@ def _openai_vision(instruction: str, frames: list[str]) -> dict:
     headers = {"Authorization": f"Bearer {config.OPENAI_API_KEY}"} if config.OPENAI_API_KEY else {}
     body = {"model": config.OPENAI_MODEL, "messages": [{"role": "user", "content": content}],
             "response_format": {"type": "json_object"}}
-    resp = requests.post(f"{config.OPENAI_BASE_URL}/chat/completions",
-                         json=body, headers=headers, timeout=300)
-    resp.raise_for_status()
-    return json.loads(resp.json()["choices"][0]["message"]["content"])
+    data = _post_json(f"{config.OPENAI_BASE_URL}/chat/completions", body, headers)
+    return json.loads(data["choices"][0]["message"]["content"])
 
 
 def _anthropic_vision(instruction: str, frames: list[str]) -> dict:

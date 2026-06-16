@@ -69,6 +69,8 @@ def test_gemini_parses(monkeypatch):
     monkeypatch.setattr(config, "GEMINI_API_KEY", "k")
 
     class _Resp:
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -83,6 +85,8 @@ def test_gemini_blocked(monkeypatch):
     monkeypatch.setattr(config, "GEMINI_API_KEY", "k")
 
     class _Resp:
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -106,6 +110,8 @@ def test_openai_allows_local_without_key(monkeypatch):
     monkeypatch.setattr(config, "OPENAI_BASE_URL", "http://localhost:11434/v1")
 
     class _Resp:
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -114,6 +120,74 @@ def test_openai_allows_local_without_key(monkeypatch):
 
     monkeypatch.setattr(brain.requests, "post", lambda *a, **k: _Resp())
     assert brain._openai_json("p", "hint") == {"a": 1}
+
+
+def test_gemini_key_stays_out_of_url(monkeypatch):
+    """Security: the API key must travel in a header, never the URL (URLs leak into error logs)."""
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "SECRET123")
+    seen = {}
+
+    class _Resp:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"candidates": [{"content": {"parts": [{"text": '{"a": 1}'}]}}]}
+
+    def fake_post(url, json=None, headers=None, timeout=300):
+        seen["url"] = url
+        seen["headers"] = headers or {}
+        return _Resp()
+
+    monkeypatch.setattr(brain.requests, "post", fake_post)
+    brain._gemini([{"text": "x"}])
+    assert "SECRET123" not in seen["url"]
+    assert seen["headers"].get("x-goog-api-key") == "SECRET123"
+
+
+def test_post_json_retries_then_succeeds(monkeypatch):
+    """A transient 503 is retried, not fatal."""
+    monkeypatch.setattr(brain.time, "sleep", lambda _s: None)
+    calls = {"n": 0}
+
+    class _Resp:
+        def __init__(self, code):
+            self.status_code = code
+            self.reason = "x"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"ok": True}
+
+    def fake_post(*a, **k):
+        calls["n"] += 1
+        return _Resp(503 if calls["n"] == 1 else 200)
+
+    monkeypatch.setattr(brain.requests, "post", fake_post)
+    assert brain._post_json("http://x", {}, {}) == {"ok": True}
+    assert calls["n"] == 2
+
+
+def test_post_json_raises_after_exhausting_retries(monkeypatch):
+    monkeypatch.setattr(brain.time, "sleep", lambda _s: None)
+
+    class _Resp:
+        status_code = 503
+        reason = "Service Unavailable"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {}
+
+    monkeypatch.setattr(brain.requests, "post", lambda *a, **k: _Resp())
+    with pytest.raises(brain.requests.HTTPError):
+        brain._post_json("http://x", {}, {}, attempts=2)
 
 
 def test_vision_auto_prefers_gemini(monkeypatch):
