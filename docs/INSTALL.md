@@ -214,6 +214,8 @@ python -m pipeline.backfill path/to/saved_posts.json
 
 The parser matches the common export shape with a regex fallback, so check it against your own file in case a key differs.
 
+For a full backlog, the Gemini free tier (about 20 requests a day) is too small. Because the brain is provider-agnostic, point `BRAIN_PROVIDER` at a higher-limit option for the backfill and keep Gemini for live shares: Groq (free, fast), a local Ollama (free, unlimited), or a Gemini key with billing (about a dollar for the whole backlog). Set `BACKFILL_SLEEP` to match the provider's rate limit; the run is resumable, so you can stop and restart anytime.
+
 ## 9. Run with Docker
 
 Docker is the simplest way to keep the bot running on any OS or a small always-on box. The `compose.yaml` ships a single long-running bot service.

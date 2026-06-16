@@ -119,6 +119,8 @@ Current Anthropic model ids you can name: `claude-haiku-4-5`, `claude-sonnet-4-6
 
 Treat these as starting points and try a few reels on your own content before deciding.
 
+For a one-time backfill of a full saved history, the Gemini free tier (about 20 requests a day) runs out fast. Point `BRAIN_PROVIDER` at a higher-limit option just for the backfill (Groq free, a local Ollama, or a Gemini key with billing, about a dollar for the whole backlog) and keep Gemini for the daily live shares. `BACKFILL_SLEEP` paces the run to the provider's rate limit.
+
 ## How quality stays high on any model
 
 Two mechanisms keep a small or free model honest.

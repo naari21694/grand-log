@@ -3,12 +3,16 @@
 What we have considered for Grand Log, kept separate from the README so the README stays a map of what is real. This is a thinking list, not a set of promises. Shipped work is in the [CHANGELOG](CHANGELOG.md).
 
 ## Make it easier to spin up (onboarding)
-In build order, biggest and most-real first:
+Shipped so far (see the [CHANGELOG](CHANGELOG.md)): the local recipe cookbook, the `python -m pipeline.setup` wizard, the mode-aware doctor, and the release automation that builds and pushes a multi-arch GHCR image on every version tag. Still considered, biggest first:
 
-1. **Bundle Mealie in compose.** The local recipe cookbook is done (see the [CHANGELOG](CHANGELOG.md)): on the no-Mealie path recipes append to `work/recipes.json` and `work/recipes.csv`, so nothing is lost. Still open: bundle Mealie in `compose.yaml` so the rich destination also works end to end with no extra manual service.
-2. **Split dependencies** into a small core plus optional extras (`whisper`, `bot`, `anthropic`), so the caption-first plus Gemini path installs light and fast instead of pulling the whole tree.
-3. **A prebuilt multi-arch image on GHCR,** published on release, so setup becomes `docker run` or `docker compose up` with no Python, pip, ffmpeg, or build step.
-4. **The non-developer path:** one-click deploy buttons (the templates already exist, see [docs/DEPLOY.md](docs/DEPLOY.md)) and a Codespaces badge for a zero-install trial. (The `python -m pipeline.setup` wizard and the mode-aware doctor are now shipped, see the [CHANGELOG](CHANGELOG.md).)
+1. **Bundle Mealie in `compose.yaml`** so the rich recipe destination also comes up with no extra manual service. The no-Mealie path already keeps recipes in `work/recipes.json` and `recipes.csv`, so nothing is lost without it.
+2. **Split dependencies** into a small core plus optional extras (`whisper`, `bot`, `anthropic`), so the caption-first plus Gemini path installs light instead of pulling the whole tree.
+3. **A GHCR-pull `compose.yaml` and one-click deploy buttons.** The image publishes on release and the deploy templates already exist (see [docs/DEPLOY.md](docs/DEPLOY.md)); the remaining win is a compose that pulls the prebuilt image with no local build, plus a Codespaces badge for a zero-install trial.
+
+## Public launch and community
+- **A demo in the README:** a short GIF of a share becoming a card, plus a dashboard screenshot. This is the single biggest driver of trust and stars. Captured once the capture path is exercised end to end on real shares.
+- **Make it findable:** enable GitHub Discussions and label a handful of `good first issue`s drawn from this file.
+- **A contributor seam for new buckets:** the generic `saved` bucket and centralized routing already make a new category cheap; a short "add a bucket" guide turns that into community pull requests.
 
 ## Robustness and performance
 - Small worker concurrency with rate-limiting for backfill; prompt-cache the schema and use a batch API at half price for the one-time backlog.
@@ -17,7 +21,7 @@ In build order, biggest and most-real first:
 (Shipped, see the [CHANGELOG](CHANGELOG.md): worker retry-with-backoff plus a dead-letter; transcribe off the box, now done via GPU auto-detect and the Groq Whisper backend; and deleting the downloaded media after processing via `KEEP_MEDIA`.)
 
 ## Product
-- **Auto-router:** the brain picks the bucket so a share needs zero taps, with the crew buttons as an override.
+- **Live auto-router:** the backfill already classifies each item with the brain (one call per collection). Bring the same auto-routing to a single live share so it needs zero taps, with the crew buttons as an override.
 - **Resurfacing reminders:** a scheduled digest, on-this-day, and proximity nudges for places. The user research found resurfacing is the single most-wanted fix.
 - **Live destination connectors:** Google Sheets, My Maps, and Notion APIs, replacing the manual file import.
 - **Durable image-post (`/p/`) support in the pipeline itself:** download the carousel images via gallery-dl and run the vision pass on them. About half a typical saved backlog is image posts, not video reels; the offline runner already handles them, but the pipeline's `process_one` is still video-centric.
