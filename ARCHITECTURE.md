@@ -32,6 +32,7 @@ flowchart LR
 - `web.py` the tile dashboard server
 - `backfill.py` load an Instagram export into the queue
 - `doctor.py` preflight check (`python -m pipeline.doctor`)
+- `setup.py` the guided setup wizard (`python -m pipeline.setup`)
 
 **Core**
 - `config.py` env config (12-factor)

@@ -9,6 +9,7 @@ For a Telegram Mini App, expose it over HTTPS (a tunnel) and set WEBAPP_URL in .
 """
 from __future__ import annotations
 
+import hmac
 import json
 import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -118,7 +119,8 @@ class _Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if config.DASHBOARD_TOKEN:
             token = parse_qs(parsed.query).get("token", [""])[0]
-            if token != config.DASHBOARD_TOKEN:
+            # constant-time compare so a wrong token cannot be guessed via response timing
+            if not hmac.compare_digest(token, config.DASHBOARD_TOKEN):
                 self._send(401, b"unauthorized", "text/plain")
                 return
         if parsed.path == "/":
@@ -149,6 +151,11 @@ class _Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     store.init_db()
+    # never expose the whole store unauthenticated: a non-loopback bind requires a token
+    if config.DASHBOARD_HOST not in ("127.0.0.1", "localhost", "::1") and not config.DASHBOARD_TOKEN:
+        raise SystemExit(
+            f"Refusing to bind {config.DASHBOARD_HOST} without DASHBOARD_TOKEN set. "
+            "Set a token or bind 127.0.0.1.")
     server = ThreadingHTTPServer((config.DASHBOARD_HOST, config.DASHBOARD_PORT), _Handler)
     print(f"Grand Log dashboard on http://{config.DASHBOARD_HOST}:{config.DASHBOARD_PORT}")
     server.serve_forever()

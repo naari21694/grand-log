@@ -117,7 +117,7 @@ Current Anthropic model ids you can name: `claude-haiku-4-5`, `claude-sonnet-4-6
 - Groq: [groq.com](https://groq.com)
 - Anthropic: [console.anthropic.com](https://console.anthropic.com)
 
-The live extraction path is not benchmarked, so treat these as starting points and try a few reels on your own content before deciding.
+Treat these as starting points and try a few reels on your own content before deciding.
 
 ## How quality stays high on any model
 

@@ -1,7 +1,9 @@
 """Grab the reel: yt-dlp primary to gallery-dl fallback. Returns video + caption + handle.
 
-Instagram is the #1 fragility (login-walled): set YTDLP_COOKIES_BROWSER to a logged-in
-browser profile of a THROWAWAY account, and keep yt-dlp updated.
+Instagram is the #1 fragility (login-walled). A Netscape cookies.txt is auto-detected and
+preferred (default work/cookies.txt, env YTDLP_COOKIES_FILE); export it from a THROWAWAY
+account. The browser-cookie path (YTDLP_COOKIES_BROWSER) is an override and is broken on
+Windows (Chrome DPAPI). Keep yt-dlp updated.
 """
 from __future__ import annotations
 

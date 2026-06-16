@@ -136,9 +136,9 @@ def test_gemini_key_stays_out_of_url(monkeypatch):
         def json(self):
             return {"candidates": [{"content": {"parts": [{"text": '{"a": 1}'}]}}]}
 
-    def fake_post(url, json=None, headers=None, timeout=300):
+    def fake_post(url, **kwargs):
         seen["url"] = url
-        seen["headers"] = headers or {}
+        seen["headers"] = kwargs.get("headers") or {}
         return _Resp()
 
     monkeypatch.setattr(brain.requests, "post", fake_post)
@@ -188,6 +188,33 @@ def test_post_json_raises_after_exhausting_retries(monkeypatch):
     monkeypatch.setattr(brain.requests, "post", lambda *a, **k: _Resp())
     with pytest.raises(brain.requests.HTTPError):
         brain._post_json("http://x", {}, {}, attempts=2)
+
+
+def test_post_json_400_raises_without_retry(monkeypatch):
+    """A non-retryable status (400) must raise immediately, no retry, no backoff."""
+    calls = {"n": 0}
+    slept = {"n": 0}
+    monkeypatch.setattr(brain.time, "sleep", lambda _s: slept.__setitem__("n", slept["n"] + 1))
+
+    class _Resp:
+        status_code = 400
+        reason = "Bad Request"
+
+        def raise_for_status(self):
+            raise brain.requests.HTTPError("400 Bad Request")
+
+        def json(self):
+            return {}
+
+    def fake_post(*a, **k):
+        calls["n"] += 1
+        return _Resp()
+
+    monkeypatch.setattr(brain.requests, "post", fake_post)
+    with pytest.raises(brain.requests.HTTPError):
+        brain._post_json("http://x", {}, {})
+    assert calls["n"] == 1
+    assert slept["n"] == 0
 
 
 def test_vision_auto_prefers_gemini(monkeypatch):

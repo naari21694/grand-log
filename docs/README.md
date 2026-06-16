@@ -7,6 +7,7 @@ Guides for running, configuring, and deploying Grand Log. New here? Start with t
 - [CONFIGURATION.md](CONFIGURATION.md): every setting. Capture mode, the brain providers and model
   picks, transcription, destinations, routing, and security.
 - [DEPLOY.md](DEPLOY.md): put it on an always-on server. Railway, Fly, Render, or your own box.
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md): problem, cause, fix for the common snags, grouped by area.
 - [research-oss-android-apps.md](research-oss-android-apps.md): the user research behind the design.
 
 At the repo root: [ARCHITECTURE.md](../ARCHITECTURE.md) (the module map),

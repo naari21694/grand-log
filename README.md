@@ -14,7 +14,7 @@ Share a reel to a Telegram bot. A small crew pulls out the value and files it wh
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
 
-**[Install](docs/INSTALL.md)  ·  [Configure](docs/CONFIGURATION.md)  ·  [Deploy](docs/DEPLOY.md)  ·  [Architecture](ARCHITECTURE.md)  ·  [Security](SECURITY.md)  ·  [Ideas](IDEAS.md)  ·  [Changelog](CHANGELOG.md)  ·  [Contribute](CONTRIBUTING.md)**
+**[Install](docs/INSTALL.md)  ·  [Configure](docs/CONFIGURATION.md)  ·  [Deploy](docs/DEPLOY.md)  ·  [Troubleshooting](docs/TROUBLESHOOTING.md)  ·  [Architecture](ARCHITECTURE.md)  ·  [Security](SECURITY.md)  ·  [Ideas](IDEAS.md)  ·  [Changelog](CHANGELOG.md)  ·  [Contribute](CONTRIBUTING.md)**
 
 </div>
 
@@ -38,6 +38,31 @@ flowchart LR
 ```
 
 One share, zero typing. The phone never does the heavy work. Everything runs on your own box, with your own keys, and nothing phones home.
+
+## What you get back
+
+A reel whose caption reads:
+
+> One-pan garlic butter pasta: 200g spaghetti, 4 cloves garlic, 50g butter, parmesan, serves 2.
+
+becomes a structured recipe you can cook, scale, and search:
+
+```json
+{
+  "title": "One-Pan Garlic Butter Pasta",
+  "base_servings": 2,
+  "ingredients": [
+    {"quantity": 200, "unit": "g", "food": "spaghetti", "grams": 200},
+    {"quantity": 4, "unit": "clove", "food": "garlic"},
+    {"quantity": 50, "unit": "g", "food": "butter", "grams": 50},
+    {"quantity": 0, "unit": "", "food": "parmesan", "note": "to taste"}
+  ],
+  "tags": ["pasta", "vegetarian", "quick"],
+  "confidence": "high"
+}
+```
+
+A place becomes a map pin with a name, area, and one line on why it is worth it. A home idea becomes a vault row with the item, room, and source. Each record lands in its destination (Mealie, your map, your vault) and is indexed so `/search` and the weekly digest can resurface it later.
 
 ## The crew
 
@@ -75,14 +100,19 @@ Crew names are an affectionate One Piece homage. The bucket keys underneath are 
 
 ```bash
 cd reel-pipeline
-python -m venv .venv && . .venv/bin/activate      # Windows: .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt                    # plus install ffmpeg
-cp .env.example .env                               # add a free Gemini key (aistudio.google.com)
-python -m pipeline.doctor                          # checks ffmpeg, your key, and access control
+python -m venv .venv
+. .venv/bin/activate              # Windows (PowerShell): .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m pipeline.setup          # guided: writes .env (add a free Gemini key), then runs the doctor
+```
+
+Then extract one reel from its caption alone (no download, no Whisper):
+
+```bash
 python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --no-video --dry-run
 ```
 
-That extracts from the caption alone (no download, no Whisper) and writes the structured result to `work/`. Drop `--no-video` to let it read the video when the caption is thin. Add `MEALIE_URL` and `MEALIE_TOKEN` and drop `--dry-run` to land recipes in a real cookbook. The step-by-step guide is [docs/INSTALL.md](docs/INSTALL.md); every setting is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
+`--no-video` reads only the caption; drop it to read the audio and on-screen text when the caption is thin. `--dry-run` writes to a local cookbook under `work/`; add `MEALIE_URL` and `MEALIE_TOKEN`, then drop `--dry-run`, to land recipes in Mealie. ffmpeg is only needed when a reel falls back to video ([download](https://ffmpeg.org/download.html); Windows: `winget install Gyan.FFmpeg`). Full walkthrough: [docs/INSTALL.md](docs/INSTALL.md). Every setting: [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
 ## Requirements and where to get them
 

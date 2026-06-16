@@ -8,7 +8,7 @@ from __future__ import annotations
 import requests
 
 _URL = "https://nominatim.openstreetmap.org/search"
-_HEADERS = {"User-Agent": "grand-log/0.1 (https://github.com/naari21694/grand-log)"}
+_HEADERS = {"User-Agent": "grand-log/0.4 (https://github.com/naari21694/grand-log)"}
 
 
 def lookup(query: str) -> tuple[float, float] | None:

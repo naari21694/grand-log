@@ -13,3 +13,12 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+  - repo: local
+    hooks:
+      # Hard stop: personal data and secrets must never enter the public repo.
+      # These paths are gitignored already; this blocks a force-add (git add -f) too.
+      - id: block-personal-data
+        name: block personal or sensitive files
+        entry: "Refuse to commit personal or sensitive files (work/, .env, cookies, exported Instagram data, the items index). These are gitignored on purpose."
+        language: fail
+        files: '(^|/)(work/|\.env$|\.env\.local$|[^/]*cookies[^/]*\.txt$|recipes\.(json|csv)$|places\.(geojson|csv)$|home\.(json|csv)$|saved_(posts|collections|music)\.json$|items\.db$|[^/]*_frames/)'

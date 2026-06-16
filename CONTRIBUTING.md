@@ -8,13 +8,18 @@ Welcome aboard. Grand Log stays free and crew-driven, so contributions are genui
 - Docs, examples, translations, triage.
 
 ## Dev setup
-Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the module map, then [`reel-pipeline/README.md`](reel-pipeline/README.md). Quick version:
+This file is the start-here. Read [ARCHITECTURE.md](ARCHITECTURE.md) for the full module map when you are ready to read the code, and [`reel-pipeline/README.md`](reel-pipeline/README.md) for run details. Quick version:
 ```bash
 cd reel-pipeline
-python -m venv .venv && . .venv/bin/activate   # Windows: .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt                 # plus install ffmpeg
-cp .env.example .env                            # add a free brain key (Gemini at aistudio.google.com)
-python -m pipeline.doctor                       # confirms ffmpeg, your key, and access control
+python -m venv .venv
+
+# activate the venv:
+. .venv/bin/activate              # Linux/macOS
+# .\.venv\Scripts\Activate.ps1    # Windows PowerShell
+
+pip install -r requirements.txt   # plus install ffmpeg
+cp .env.example .env              # or run python -m pipeline.setup to add a free brain key (Gemini at aistudio.google.com)
+python -m pipeline.doctor         # confirms ffmpeg, your key, and access control
 python -m pipeline.process "<reel-url>" --dry-run
 ```
 Bring any provider's key (Gemini, OpenAI-compatible, or Anthropic); the full matrix is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).

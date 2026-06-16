@@ -1,6 +1,6 @@
 # Grand Log: Getting Started
 
-Grand Log is an open-source, self-hosted pipeline that turns the Instagram reels you save into things you can actually use. Share a reel and the value gets extracted and filed: a recipe with exact measurements in your Mealie cookbook (Baratie), a pin on your map (Log Pose), or a home idea in your vault (Going Merry). You drive it all from a Telegram bot (Den Den Mushi). It is alpha software, so expect rough edges, and the live extraction path has not been benchmarked.
+Grand Log is an open-source, self-hosted pipeline that turns the Instagram reels you save into things you can actually use. Share a reel and the value gets extracted and filed: a recipe with exact measurements in your Mealie cookbook (Baratie), a pin on your map (Log Pose), or a home idea in your vault (Going Merry). You drive it all from a Telegram bot (Den Den Mushi). It is alpha software, so expect rough edges.
 
 There are three ways to run it:
 
@@ -127,13 +127,18 @@ The three required checks gate the exit code. When they all pass you see "All re
 
 ## 5. Your first extraction (no Mealie needed)
 
-You can extract a reel and see the result without any destination set up. Use `--dry-run`:
+You can extract a reel and see the result without any destination set up. Start with the fastest path, caption-only, which matches the README quickstart:
 
 ```bash
-python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --dry-run
+python -m pipeline.process "https://www.instagram.com/reel/XXXX/" --no-video --dry-run
 ```
 
-This downloads the reel, transcribes it, runs the brain, and writes the full structured result to `work/last_recipe.json` instead of sending it anywhere. Open that file to see what the brain pulled out: measurements, a confidence flag, and more.
+What the two flags do:
+
+- `--no-video` reads only the caption. No download, no Whisper, so it is the fastest path and needs no ffmpeg and no Instagram cookies. Drop it to let the pipeline download the video and run Whisper (and the on-screen vision pass) when the caption alone is too thin. That fuller run is the `auto` default; see [CONFIGURATION.md](CONFIGURATION.md#capture-mode).
+- `--dry-run` skips any Mealie destination and writes to a local cookbook instead.
+
+Either way it runs the brain and appends the recipe to your local cookbook: `work/recipes.json` (the full list) plus a `recipes.csv` summary. It also writes the latest result to `work/last_recipe.json`. Open either to see what the brain pulled out: measurements, a confidence flag, and more.
 
 **Instagram cookies note.** Instagram blocks most logged-out downloads behind a login wall. To get past it, log into Instagram with a throwaway account, never your main one, and give the downloader its cookies.
 
@@ -230,10 +235,10 @@ docker run --rm -v "$PWD/work:/app/work" grand-log "https://www.instagram.com/re
 
 ## 10. Troubleshooting
 
-**ffmpeg not found.** The doctor's `ffmpeg on PATH` check fails. Install the real binary (see Prerequisites), then open a new terminal so PATH is refreshed. The `pip install ffmpeg` package is not the same thing and will not work.
+Full problem-cause-fix list: [TROUBLESHOOTING.md](TROUBLESHOOTING.md). The two you are most likely to hit first:
 
-**Instagram login wall.** Downloads fail or return nothing because Instagram blocks logged-out access. Export a `cookies.txt` from a throwaway Instagram account and drop it at `work/cookies.txt`, which is auto-detected and is the path that works on Windows (see step 5). The browser-cookie override (`YTDLP_COOKIES_BROWSER`) fails on Windows with a DPAPI decrypt error, so use the file there. Do not use your main account.
+**ffmpeg not found.** The doctor's `ffmpeg on PATH` check fails. Install the real binary (see Prerequisites), then open a new terminal so PATH is refreshed. The `pip install ffmpeg` package is not the same thing and will not work. Caption-only runs (`--no-video`) do not need ffmpeg at all.
 
-**Brain key errors.** If extraction fails with an auth or key error, recheck the provider and key in `.env`. For Gemini, confirm `BRAIN_PROVIDER=gemini` and that `GEMINI_API_KEY` is filled in. Run `python -m pipeline.doctor` to confirm the brain line is `[OK ]`.
+**Instagram login wall.** Downloads fail or return nothing because Instagram blocks logged-out access. Export a `cookies.txt` from a throwaway Instagram account and drop it at `work/cookies.txt`, which is auto-detected and is the path that works on Windows (see step 5). Do not use your main account.
 
-**Anthropic SDK note.** If you set `BRAIN_PROVIDER=anthropic`, you also need the `anthropic` SDK. It ships in `requirements.txt` and is imported only when you use that provider, so a normal `pip install -r requirements.txt` covers it. If the doctor's `brain: anthropic SDK` line fails, run `pip install anthropic` in your active virtualenv.
+For GPU and CUDA libraries, the Windows browser-cookie (DPAPI) failure, brain auth errors, the Anthropic SDK, the bot "Locked, your chat id is X" claim flow, and the Telegram-unreachable case, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).

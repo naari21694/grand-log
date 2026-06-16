@@ -62,8 +62,6 @@ def check() -> bool:
         required.append(ffmpeg_line)
 
     # Advisory: needed only for the bot and the cookbook destination.
-
-    # Advisory: needed only for the bot and the cookbook destination.
     locked = bool(config.ALLOWED_CHAT_IDS) or config.ALLOW_ALL_CHATS
     _line("bot access control", locked, "set ALLOWED_CHAT_IDS to lock the bot to you")
     _line("telegram token (optional)", bool(config.TELEGRAM_BOT_TOKEN),

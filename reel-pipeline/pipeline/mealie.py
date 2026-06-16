@@ -64,11 +64,17 @@ def _to_payload(r: dict) -> dict:
 
 def upsert(recipe: dict, image_path: str | None = None) -> str:
     h = {"Authorization": f"Bearer {config.MEALIE_TOKEN}"}
-    slug = requests.post(f"{config.MEALIE_URL}/api/recipes",
-                         json={"name": recipe.get("title", "Untitled reel recipe")},
-                         headers=h, timeout=60).json()
+    # Step 1 create: must raise on auth/5xx, else the error body parses into a junk slug
+    # that then silently builds the PATCH and image URLs below.
+    create = requests.post(f"{config.MEALIE_URL}/api/recipes",
+                           json={"name": recipe.get("title", "Untitled reel recipe")},
+                           headers=h, timeout=60)
+    create.raise_for_status()
+    slug = create.json()
     if isinstance(slug, dict):
         slug = slug.get("slug") or slug.get("id")
+    if not slug or not isinstance(slug, str):
+        raise RuntimeError(f"Mealie create returned no slug: {str(create.text)[:200]}")
 
     requests.patch(f"{config.MEALIE_URL}/api/recipes/{slug}",
                    json=_to_payload(recipe), headers=h, timeout=60).raise_for_status()
@@ -77,5 +83,5 @@ def upsert(recipe: dict, image_path: str | None = None) -> str:
         with open(image_path, "rb") as fh:
             requests.put(f"{config.MEALIE_URL}/api/recipes/{slug}/image",
                          files={"image": ("thumb.jpg", fh, "image/jpeg")},
-                         data={"extension": "jpg"}, headers=h, timeout=60)
+                         data={"extension": "jpg"}, headers=h, timeout=60).raise_for_status()
     return slug
