@@ -10,6 +10,9 @@ permissions: read-all
 jobs:
   analysis:
     name: Scorecard analysis
+    # Scorecard targets public repos; its checkout fails on a private repo. Run only when public
+    # (matches the CodeQL gate), so CI stays clean while private and Scorecard runs once public.
+    if: github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
     permissions:
       security-events: write   # upload SARIF to code scanning
