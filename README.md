@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a2980,100:26d0ce&height=200&section=header&text=Grand%20Log&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38" width="100%" alt="Grand Log"/>
+# Grand Log
 
 ### Turn the Instagram reels you save and forget into a cookbook, a map, and a vault.
 
@@ -174,18 +174,3 @@ Anyone can contribute by fork and pull request. Trusted contributors climb a tra
 
 Open source under [AGPL-3.0](LICENSE): free to use, modify, self-host, and build on, as long as your version stays open too. A commercial or closed-source product on top needs a separate commercial license, see [LICENSING.md](LICENSING.md).
 
----
-
-<div align="center">
-
-### Contributors
-<a href="https://github.com/naari21694/grand-log/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=naari21694/grand-log" alt="contributors"/>
-</a>
-
-### Star history
-[![Star History Chart](https://api.star-history.com/svg?repos=naari21694/grand-log&type=Date)](https://star-history.com/#naari21694/grand-log&Date)
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:26d0ce,100:1a2980&height=110&section=footer" width="100%" alt=""/>
-
-</div>
