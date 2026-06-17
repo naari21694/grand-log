@@ -17,6 +17,8 @@ Shipped so far (see the [CHANGELOG](CHANGELOG.md)): the local recipe cookbook, t
 ## Robustness and performance
 - Small worker concurrency with rate-limiting for backfill; prompt-cache the schema and use a batch API at half price for the one-time backlog.
 - A quality and per-reel latency and cost benchmark across providers, so "good" is a number, not a claim.
+- A hash-pinned dependency lockfile (`pip-compile --generate-hashes`) the Docker image builds from, for reproducible and tamper-evident builds. Generate it on Linux to match the image platform. Worth it before 1.0 or before recommending a production self-host; until then the `>=` floors plus Dependabot keep deps current.
+- A CI import smoke that installs `requirements.txt` and imports each module, catching a runtime import break that the hermetic pytest suite and byte-compile job miss. Trigger: the first such break that reaches a release, or when the dependency surface grows past the current light tree.
 
 (Shipped, see the [CHANGELOG](CHANGELOG.md): worker retry-with-backoff plus a dead-letter; transcribe off the box, now done via GPU auto-detect and the Groq Whisper backend; and deleting the downloaded media after processing via `KEEP_MEDIA`.)
 
