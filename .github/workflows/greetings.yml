@@ -7,7 +7,7 @@ jobs:
   greeting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/first-interaction@v1
+      - uses: actions/first-interaction@3c71ce730280171fd1cfb57c00c774f8998586f7 # v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           issue-message: "Welcome aboard, and thanks for the first issue. A maintainer will look soon. See CONTRIBUTING.md if you want to dig in."
