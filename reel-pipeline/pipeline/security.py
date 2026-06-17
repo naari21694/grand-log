@@ -13,6 +13,11 @@ from . import config
 _URL = re.compile(r"https?://[^\s]+")
 
 # Hosts a reel can legitimately come from. Override with ALLOWED_HOSTS in .env.
+# This guards the SUBMITTED host. The downloaders (yt-dlp, gallery-dl) follow 3xx redirects
+# themselves with no per-hop re-check, so allowed hosts are trusted not to open-redirect to an
+# internal address. Owner-locked submission keeps the real-world risk low; for a hard guarantee,
+# egress-restrict the downloader away from link-local and RFC1918 at the deploy layer. Entries
+# must be domain names, never IP literals.
 DEFAULT_HOSTS = (
     "instagram.com", "tiktok.com", "youtube.com", "youtu.be",
     "facebook.com", "fb.watch", "pinterest.com", "pin.it",

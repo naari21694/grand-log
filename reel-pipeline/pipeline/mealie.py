@@ -5,6 +5,8 @@ renders 1/2/4/6/10. scaling_notes + confidence go into recipe notes; nutrition i
 """
 from __future__ import annotations
 
+from urllib.parse import quote
+
 import requests
 
 from . import config
@@ -75,6 +77,7 @@ def upsert(recipe: dict, image_path: str | None = None) -> str:
         slug = slug.get("slug") or slug.get("id")
     if not slug or not isinstance(slug, str):
         raise RuntimeError(f"Mealie create returned no slug: {str(create.text)[:200]}")
+    slug = quote(slug, safe="")  # a hostile/odd server slug must not traverse the PATCH and image URLs
 
     requests.patch(f"{config.MEALIE_URL}/api/recipes/{slug}",
                    json=_to_payload(recipe), headers=h, timeout=60).raise_for_status()
