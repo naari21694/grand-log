@@ -14,6 +14,8 @@ Share a reel to a Telegram bot. A small crew pulls out the value and files it wh
 ![code style: ruff](https://img.shields.io/badge/style-ruff-D7FF64?style=flat-square)
 [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/naari21694/grand-log)
+
 **[Install](docs/INSTALL.md)  ·  [Configure](docs/CONFIGURATION.md)  ·  [Deploy](docs/DEPLOY.md)  ·  [Troubleshooting](docs/TROUBLESHOOTING.md)  ·  [Architecture](ARCHITECTURE.md)  ·  [Security](SECURITY.md)  ·  [Ideas](IDEAS.md)  ·  [Changelog](CHANGELOG.md)  ·  [Contribute](CONTRIBUTING.md)**
 
 </div>
