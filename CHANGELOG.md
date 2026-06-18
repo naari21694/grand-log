@@ -7,6 +7,14 @@ versions may still change behavior.
 
 ## [Unreleased]
 
+### Added
+- Google Maps export (`python -m pipeline.export_maps`): turns `work/places.geojson` into KML, KMZ, and CSV grouped by category, ready to import into Google My Maps or Google Earth, plus `unmapped.csv` for places without a pin. `--format` picks one output; `--regeocode` fills in missing pins first. The files refresh automatically after a place capture (`EXPORT_MAPS_AUTO`, default on; backfill refreshes once at the end).
+- Accuracy-first geocoding (`geocode.locate`): the lookup is constrained to the place's country, country and state centroids are rejected for real POIs, a second source (Photon) is tried when Nominatim misses, and same-name results are ranked toward the named city. The place capture path now uses it.
+- `places.regeocode_missing()` re-geocodes places that are still unpinned, reusing the accuracy-first geocoder, useful as OpenStreetMap coverage improves or for the deferred image posts.
+
+### Changed
+- The test suite grew to 135, covering the export formats, the country-constrained geocoder, the re-geocode pass, and the auto-refresh hook.
+
 ## [0.4.1] - 2026-06-16
 
 ### Security

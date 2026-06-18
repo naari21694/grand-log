@@ -286,6 +286,10 @@ The tile dashboard (`python -m pipeline.web`) binds localhost by default. Expose
 
 Run `python -m pipeline.doctor` to confirm the access-control and brain settings are in place before you go live.
 
+## Google Maps export
+
+Log Pose writes every place to `work/places.geojson`. `python -m pipeline.export_maps` turns it into `work/maps/places.kml`, `places.kmz`, and `places.csv`, grouped by category, plus `unmapped.csv` for any place without a pin. `--format kml|kmz|csv|all` picks the output, and `--regeocode` fills in missing pins first (reusing the country-constrained geocoder). With `EXPORT_MAPS_AUTO=true` (the default) these files refresh after each place capture, and once at the end of a backfill. Import the KML or CSV into [Google My Maps](https://mymaps.google.com): the consumer Maps app cannot open the files directly, but the map you create in My Maps appears in the app under Saved, then Maps, on every device signed into the same account.
+
 ## Full environment-variable reference
 
 Every variable, its meaning, and its default. Defaults are taken from `pipeline/config.py` and `.env.example`.
@@ -317,6 +321,7 @@ Every variable, its meaning, and its default. Defaults are taken from `pipeline/
 | `ANTHROPIC_MODEL` | Anthropic model. | `claude-haiku-4-5` |
 | `MEALIE_URL` | Mealie base URL; trailing slash trimmed. Empty forces dry-run. | (empty) |
 | `MEALIE_TOKEN` | Mealie API token. | (empty) |
+| `EXPORT_MAPS_AUTO` | Regenerate the Google Maps files (`work/maps`: KML, KMZ, CSV) after each place capture; backfill regenerates once at the end. `false` exports only on demand via `python -m pipeline.export_maps`. | `true` |
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token from @BotFather; needed to run the bot. | (empty) |
 | `WORKER_MAX_ATTEMPTS` | Worker retries before a job is dead-lettered, with exponential backoff. | `3` |
 | `ALLOWED_CHAT_IDS` | Telegram chat ids allowed to drive the bot (comma- or space-separated). | (empty) |

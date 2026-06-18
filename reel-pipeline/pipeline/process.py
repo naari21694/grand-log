@@ -24,6 +24,7 @@ from . import (
     brain,
     config,
     download,
+    export_maps,
     frames,
     geocode,
     home,
@@ -65,7 +66,7 @@ def _banner() -> None:
 
 
 def process_one(url: str, bucket: str = "recipe", dry_run: bool = False, mode: str | None = None,
-                caption: str | None = None) -> dict:
+                caption: str | None = None, auto_export: bool = True) -> dict:
     mode = mode or config.CAPTURE_MODE
     extract = {"place": brain.extract_place, "home": brain.extract_home}.get(bucket, brain.extract_text)
     if caption is not None:  # offline path: caption supplied (for example from a saved-data export)
@@ -86,6 +87,8 @@ def process_one(url: str, bucket: str = "recipe", dry_run: bool = False, mode: s
     record["_card"] = card
     store.save(bucket=bucket, title=card["title"], summary=card["summary"], link=card["link"],
                thumb=card["thumb"], text=json.dumps(record, ensure_ascii=False), source_url=url)
+    if bucket == "place" and auto_export and config.EXPORT_MAPS_AUTO:
+        export_maps.refresh()  # keep the Google Maps files current; best-effort, never fatal
     if not config.KEEP_MEDIA:
         _cleanup_media(media)
     return record
@@ -194,10 +197,10 @@ def _finish_place(url: str, media, place: dict) -> dict:
     if media.video and brain.vision_available():
         place = brain.extract_vision_full(frames.sample(media.video), place, "place")
     if not place.get("lat") and place.get("name"):
-        query = " ".join(p for p in (place.get("name"), place.get("city"), place.get("country")) if p)
-        coords = geocode.lookup(query)
-        if coords:
-            place["lat"], place["lng"] = coords
+        hit = geocode.locate(place.get("name"), place.get("city"), place.get("country"),
+                             place.get("category"))
+        if hit:
+            place["lat"], place["lng"] = hit["lat"], hit["lng"]
     places.append(place)
     place["_thumb"] = (frames.grab_one(media.video) or "") if media.video else ""
     maps_q = urllib.parse.quote_plus(
