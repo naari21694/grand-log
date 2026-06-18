@@ -71,7 +71,7 @@ A place becomes a map pin with a name, area, and one line on why it is worth it.
 | | Tool | What it does | Status |
 |---|---|---|---|
 | 🍳 | **Baratie** | Recipes into a Mealie cookbook (or a local cookbook file), with exact measurements auto-scaled for 1, 2, 4, 6, 10 people | built |
-| 🗾 | **Log Pose** | Places into map pins (GeoJSON) plus a region-grouped sheet (CSV) | built |
+| 🗾 | **Log Pose** | Places into Google Maps files (KML, KMZ, CSV) grouped by category, plus GeoJSON, ready for My Maps | built |
 | 🏠 | **Going Merry** | Home and build-together ideas into a vault (CSV and JSON) | built |
 | 🐌 | **Den Den Mushi** | The Telegram bot you share reels to. Any phone, zero install, identical on iOS and Android | built |
 
@@ -83,7 +83,7 @@ Crew names are an affectionate One Piece homage. The bucket keys underneath are 
 - **Three capture modes** (`CAPTURE_MODE`): `auto` reads the caption first and only downloads the video and runs Whisper when the caption is thin; `caption` never downloads; `full` always does.
 - **Full on-screen vision for every crew:** the vision pass reads all on-screen text (names, addresses, prices, dimensions, quantities, steps) for recipe, place, and home, not just recipe quantities.
 - **GPU transcription that just works:** faster-whisper auto-detects an NVIDIA GPU and runs on CUDA (`WHISPER_DEVICE=auto`), with a free Groq cloud option (`TRANSCRIBE_BACKEND=groq`) and a CPU fallback. Force the device with `cpu` or `cuda`.
-- **Destinations:** recipes to Mealie, or to a local cookbook file (`work/recipes.json` plus a CSV summary) when there is no Mealie; places to GeoJSON plus CSV for Google My Maps and a sheet; home items to CSV plus JSON for a sheet or Notion.
+- **Destinations:** recipes to Mealie, or to a local cookbook file (`work/recipes.json` plus a CSV summary) when there is no Mealie; places to GeoJSON, and to KML, KMZ, and CSV for Google My Maps and Google Earth (`python -m pipeline.export_maps`); home items to CSV plus JSON for a sheet or Notion.
 - **Multilingual** transcription (auto-detected: English, Japanese, Hindi, and more).
 - **Guided setup:** `python -m pipeline.setup` prompts for your brain provider and key, writes `.env`, and runs the doctor.
 - **A blip never loses a reel:** the worker retries a transient Instagram or network failure with exponential backoff and dead-letters only after `WORKER_MAX_ATTEMPTS`.
@@ -97,6 +97,23 @@ Crew names are an affectionate One Piece homage. The bucket keys underneath are 
 - **Exact measurements** from the caption, the audio, and the on-screen text. The vision pass reads quantities that flash on screen and are never spoken.
 - **Real scaling.** Ingredients land as structured `quantity + unit + food`, so Mealie's slider renders any serving count, and Baratie adds the part a slider cannot: the non-linear notes for salt, spice, leavening, cook time, and pan size when you change the batch.
 - **Canonical grams plus dual units, per-serving nutrition, tags, and a confidence flag** on anything the reel left ambiguous.
+
+## Your places in Google Maps
+
+Log Pose writes every place to `work/places.geojson`. Turn that into Google Maps files:
+
+```bash
+python -m pipeline.export_maps                # KML, KMZ, and CSV into work/maps/
+python -m pipeline.export_maps --regeocode    # fill in any places still missing a pin first
+```
+
+Then load them once into [Google My Maps](https://mymaps.google.com) (the consumer Maps app cannot import files directly):
+
+1. Create a map, then Import `work/maps/places.kml` (or `places.csv`).
+2. Set Group places by and Style by to Category, so each category (restaurant, cafe, attraction) becomes its own list.
+3. On your phone, open Google Maps, go to Saved, then Maps. The map shows there on every device signed into the same account.
+
+`places.kmz` is the single-file version for tapping open in Google Earth. Places OpenStreetMap could not locate are listed in `work/maps/unmapped.csv` with a one-tap search link. New captures refresh these files automatically (`EXPORT_MAPS_AUTO`, on by default).
 
 ## Quick start
 

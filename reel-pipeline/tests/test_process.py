@@ -5,6 +5,7 @@ from pipeline.download import Media
 def _base_patch(monkeypatch, tmp_path):
     monkeypatch.setattr(process.config, "WORKDIR", tmp_path)
     monkeypatch.setattr(process.config, "MEALIE_URL", "")
+    monkeypatch.setattr(process.config, "EXPORT_MAPS_AUTO", False)  # isolate from the export refresh
     monkeypatch.setattr(process.store, "_DB", tmp_path / "items.db")
     monkeypatch.setattr(process.download, "fetch",
                         lambda url: Media(video="v.mp4", caption="cap", handle="chef"))
@@ -72,7 +73,9 @@ def test_place_bucket_routes_and_geocodes(tmp_path, monkeypatch):
     _base_patch(monkeypatch, tmp_path)
     place = {"name": "Ichiran", "category": "food", "region": "Tokyo"}
     monkeypatch.setattr(process.brain, "extract_place", lambda *a, **k: dict(place))
-    monkeypatch.setattr(process.geocode, "lookup", lambda query: (35.0, 139.0))
+    monkeypatch.setattr(process.geocode, "locate",
+                        lambda *a, **k: {"lat": 35.0, "lng": 139.0, "source": "nominatim",
+                                         "confidence": "poi"})
     written = {}
     monkeypatch.setattr(process.places, "append", lambda p: written.update(p))
     out = process.process_one("https://x/reel/1/", "place")
@@ -80,6 +83,31 @@ def test_place_bucket_routes_and_geocodes(tmp_path, monkeypatch):
     assert out["lat"] == 35.0 and out["lng"] == 139.0
     assert written["name"] == "Ichiran"
     assert "google.com/maps" in out["_card"]["link"]
+
+
+def test_place_capture_auto_refreshes_export(tmp_path, monkeypatch):
+    _base_patch(monkeypatch, tmp_path)
+    monkeypatch.setattr(process.config, "EXPORT_MAPS_AUTO", True)
+    monkeypatch.setattr(process.brain, "extract_place", lambda *a, **k: {"name": "X", "category": "cafe"})
+    monkeypatch.setattr(process.geocode, "locate", lambda *a, **k: None)
+    monkeypatch.setattr(process.places, "append", lambda p: None)
+    calls = {"n": 0}
+    monkeypatch.setattr(process.export_maps, "refresh", lambda: calls.__setitem__("n", calls["n"] + 1))
+    process.process_one("https://x/reel/1/", "place")
+    assert calls["n"] == 1
+
+
+def test_recipe_capture_does_not_refresh_export(tmp_path, monkeypatch):
+    _base_patch(monkeypatch, tmp_path)
+    monkeypatch.setattr(process.config, "EXPORT_MAPS_AUTO", True)
+    monkeypatch.setattr(process.brain, "extract_text",
+                        lambda *a, **k: {"title": "X", "base_servings": 1,
+                                         "ingredients": [], "instructions": []})
+    monkeypatch.setattr(process.brain, "vision_available", lambda: False)
+    calls = {"n": 0}
+    monkeypatch.setattr(process.export_maps, "refresh", lambda: calls.__setitem__("n", calls["n"] + 1))
+    process.process_one("https://x/reel/1/", "recipe", dry_run=True)
+    assert calls["n"] == 0
 
 
 def test_home_bucket_routes_to_vault(tmp_path, monkeypatch):

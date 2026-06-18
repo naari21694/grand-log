@@ -28,7 +28,7 @@ import time
 from collections import Counter
 from pathlib import Path
 
-from . import brain, config, routing, store
+from . import brain, config, export_maps, routing, store
 from .process import _thin, process_one
 
 _IG_URL = re.compile(r"https?://(?:www\.)?instagram\.com/[^\s\"']+")
@@ -153,7 +153,7 @@ def ingest(path: str, limit: int = 0) -> dict:
             try:
                 bucket, used_brain = route_item(caption, name, cache)
                 if bucket in _CREW and caption:
-                    record = process_one(url, bucket, caption=caption)
+                    record = process_one(url, bucket, caption=caption, auto_export=False)
                     counts[bucket] += 1
                     if _thin(record, bucket):
                         _flag_needs_video(url, bucket, name)
@@ -172,6 +172,8 @@ def ingest(path: str, limit: int = 0) -> dict:
                 print(f"   ~ {url[:55]} deferred: {str(exc)[:90]}")
         if i % 25 == 0 or i == total:
             print(f"   {i}/{total}  {dict(counts)}")
+    if counts.get("place") and config.EXPORT_MAPS_AUTO:
+        export_maps.refresh()  # one regenerate after the bulk run, not once per item
     return dict(counts)
 
 

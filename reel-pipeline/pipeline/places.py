@@ -58,3 +58,40 @@ def _append_geojson(place: dict) -> None:
         feature["geometry"] = {"type": "Point", "coordinates": [place["lng"], place["lat"]]}
     collection["features"].append(feature)
     path.write_text(json.dumps(collection, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _has_point(feature: dict) -> bool:
+    geom = feature.get("geometry")
+    return bool(geom and geom.get("type") == "Point"
+                and isinstance(geom.get("coordinates"), list) and len(geom["coordinates"]) >= 2)
+
+
+def regeocode_missing(limit: int = 0) -> tuple[int, int]:
+    """Re-geocode places that still have no point, in place. Returns (recovered, remaining).
+
+    Reuses the accuracy-first geocoder, so a name that OpenStreetMap could not place earlier
+    gets another, country-constrained try (handy after coverage improves, or for the deferred
+    image posts). Resumable: it only touches features that are still unpinned.
+    """
+    from . import geocode
+    path = _geojson_path()
+    if not path.exists():
+        return (0, 0)
+    collection = json.loads(path.read_text(encoding="utf-8"))
+    features = collection.get("features", [])
+    todo = [f for f in features if not _has_point(f) and (f.get("properties") or {}).get("name")]
+    if limit:
+        todo = todo[:limit]
+    recovered = 0
+    for feature in todo:
+        prop = feature["properties"]
+        hit = geocode.locate(prop.get("name"), prop.get("city", ""), prop.get("country", ""),
+                             prop.get("category", ""))
+        if hit:
+            feature["geometry"] = {"type": "Point", "coordinates": [hit["lng"], hit["lat"]]}
+            prop["lat"], prop["lng"] = hit["lat"], hit["lng"]
+            recovered += 1
+    if recovered:
+        path.write_text(json.dumps(collection, indent=2, ensure_ascii=False), encoding="utf-8")
+    remaining = sum(1 for f in features if not _has_point(f))
+    return (recovered, remaining)

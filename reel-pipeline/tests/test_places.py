@@ -46,3 +46,14 @@ def test_append_without_coords_leaves_geometry_null(tmp_path, monkeypatch):
     places.append(no_coords)
     collection = json.loads((tmp_path / "places.geojson").read_text(encoding="utf-8"))
     assert collection["features"][0]["geometry"] is None
+
+
+def test_regeocode_missing_fills_points(tmp_path, monkeypatch):
+    from pipeline import geocode
+    _redirect(tmp_path, monkeypatch)
+    places.append({k: v for k, v in PLACE.items() if k not in ("lat", "lng")})
+    monkeypatch.setattr(geocode, "locate",
+                        lambda *a, **k: {"lat": 35.0, "lng": 139.0, "source": "x", "confidence": "poi"})
+    assert places.regeocode_missing() == (1, 0)
+    collection = json.loads((tmp_path / "places.geojson").read_text(encoding="utf-8"))
+    assert collection["features"][0]["geometry"]["coordinates"] == [139.0, 35.0]

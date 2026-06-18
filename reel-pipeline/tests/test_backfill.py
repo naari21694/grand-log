@@ -87,7 +87,7 @@ def test_ingest_routes_indexes_and_skips(tmp_path, monkeypatch):
     monkeypatch.setattr(backfill.store, "exists", lambda url: url.endswith("/R2/"))  # one already done
     monkeypatch.setattr(backfill.store, "save", lambda **kw: saved.append(kw))
     monkeypatch.setattr(backfill.brain, "classify", lambda caption, name="": "saved")
-    monkeypatch.setattr(backfill, "process_one", lambda url, bucket, caption=None: {
+    monkeypatch.setattr(backfill, "process_one", lambda url, bucket, caption=None, **kw: {
         "confidence": "high", "ingredients": ["x"], "instructions": ["y"], "_card": {"title": "t"}})
 
     counts = backfill.ingest(str(path))

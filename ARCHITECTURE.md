@@ -47,11 +47,12 @@ flowchart LR
 
 **Extract (the brain)**
 - `brain.py` provider-agnostic LLM adapters (Gemini, OpenAI-compatible, Anthropic), text and vision, with a validate-and-repair loop. The full-frame vision pass reads all on-screen text for every crew bucket (recipe, place, home)
-- `geocode.py` free OpenStreetMap geocoding
+- `geocode.py` free geocoding (OpenStreetMap Nominatim, then Photon), constrained to the place's country with country/state centroids rejected for real POIs
 
 **Destinations (per-bucket sinks)**
 - `mealie.py` recipes to a Mealie cookbook
-- `places.py` places to GeoJSON and CSV (My Maps, a sheet)
+- `places.py` places to GeoJSON and CSV (My Maps, a sheet); `regeocode_missing()` re-geocodes unpinned places
+- `export_maps.py` places GeoJSON to Google Maps files (KML, KMZ, CSV), grouped by category
 - `home.py` home items to CSV and JSON (a sheet, Notion)
 - `recipes.py` recipes to a local cookbook file (JSON and CSV) when there is no Mealie
 

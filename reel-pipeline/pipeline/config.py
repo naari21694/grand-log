@@ -88,6 +88,10 @@ ANTHROPIC_MODEL = _s("ANTHROPIC_MODEL", "claude-haiku-4-5")
 # --- destination ---
 MEALIE_URL = _s("MEALIE_URL").rstrip("/")
 MEALIE_TOKEN = _s("MEALIE_TOKEN")
+# Auto-regenerate the Google Maps export files (work/maps: KML, KMZ, CSV) after each place
+# capture; backfill regenerates once at the end instead. Set false to export only on demand
+# with `python -m pipeline.export_maps`.
+EXPORT_MAPS_AUTO = _bool("EXPORT_MAPS_AUTO", True)
 
 # --- Den Den Mushi (Telegram bot) ---
 TELEGRAM_BOT_TOKEN = _s("TELEGRAM_BOT_TOKEN")
