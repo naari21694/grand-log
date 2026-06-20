@@ -4,4 +4,4 @@ faster-whisper>=1.2.1
 requests>=2.34.2
 python-dotenv>=1.2.2
 python-telegram-bot>=21.0
-anthropic>=0.69.0  # only needed when BRAIN_PROVIDER=anthropic; lazy-imported
+anthropic>=0.111.0  # only needed when BRAIN_PROVIDER=anthropic; lazy-imported
