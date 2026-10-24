@@ -2,6 +2,6 @@ yt-dlp>=2026.6.9
 gallery-dl>=1.32.2
 faster-whisper>=1.2.1
 requests>=2.34.2
-python-dotenv>=1.2.2
+python-dotenv>=1.2.4
 python-telegram-bot>=22.8
 anthropic>=0.69.0  # only needed when BRAIN_PROVIDER=anthropic; lazy-imported
